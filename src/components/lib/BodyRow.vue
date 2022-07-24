@@ -2,12 +2,12 @@
     import { defineProps, ref } from 'vue';
     import BodyCell from './BodyCell.vue';
     import DetailRowToggle from './DetailRowToggle.vue';
+    import RowSpacer from './RowSpacer.vue';
 
-    const props = defineProps(['columns', 'row', 'detail']);
+    const props = defineProps(['columns', 'row', 'detail', 'spacers']);
     const showDetail = ref(false);
 
-    function toggleDetail() {
-        
+    function toggleDetail() {  
         showDetail.value = !showDetail.value;
         console.log(`TOGGLE: ${showDetail.value}`);
     }
@@ -16,6 +16,7 @@
 <template>
     <tr>
         <DetailRowToggle v-if="props.detail" :showing="showDetail" @click="toggleDetail" />
+        <th v-for="i in props.spacers" :key="i"><RowSpacer /></th>
         <body-cell v-for="column in props.columns" :key="column.label" :column="column" :row="row"></body-cell>
     </tr>
     <tr v-if="props.detail && showDetail" class="detail">
@@ -43,5 +44,9 @@
 
     td.detail {
         padding: 0;
+    }
+
+    .spacer {
+        width: 48px;
     }
 </style>

@@ -5,12 +5,11 @@
 </script>
 
 <template>
-  <data-table :columns="columns" :rows="rows" :row-detail="RowDetail" group-by="available,rating" class="table"></data-table>
+  <data-table :columns="columns" :rows="rows" group-by="available, rating" :row-detail="RowDetail" class="table"></data-table>
 </template>
 
 <style scoped>
   .table {
-    width: 1142px;
-    height: 350px;
+    width: 1300px;
   }
 </style>

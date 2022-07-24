@@ -1,0 +1,22 @@
+<script setup lang="ts">
+    import { defineProps } from 'vue';
+    import SvgIcon from '../visualizers/SvgIcon.vue';
+    const props = defineProps(['showing']);
+</script>
+
+<template>
+    <div class="container">
+        <svg-icon :icon="props.showing ? 'chevron-down' : 'chevron-right'" />
+    </div>
+</template>
+
+<style scoped>
+    .container {
+        padding: 1px 16px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+</style>

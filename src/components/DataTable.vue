@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { defineProps, computed, ref } from "vue";
 import { DataGrouper } from "./DataTableTypes.js";
 import HeaderRow from "./lib/HeaderRow.vue";
 import BodyRow from "./lib/BodyRow.vue";
+import GroupRow from "./lib/GroupRow.vue";
 
 const props = defineProps([
   "columns",
@@ -12,81 +13,40 @@ const props = defineProps([
   "filters",
 ]);
 
-/*
-function groupData(groups: Array<string>, data: any) {
-  console.log(groups);
-  if (groups && groups.length > 0) {
-    const column = props.columns.find((c: any) => c.id === groups[0]);
-
-    if (column) {
-      const id = column.id;
-      const label = column.label;
-      const field = column.field;
-
-      data.forEach((item: any) => {
-        // If it has items, group them and replace the array.
-        const newItems: Array<any> = [];
-
-        if (item.items && item.items.length > 0) {
-          const unique = [...new Set(item.items.map((i: any) => i[field]))];
-
-          unique.forEach((i: any) => {
-            newItems.push({
-              root: false,
-              label: `${label}: ${i}`,
-              items: item.items.filter((f: any) => f[field] === i),
-            });
-          });
-        }
-
-        if (groups.shift()) {
-          newItems.forEach((i: any) => {
-            () => groupData([...groups], i);
-          });
-        }
-
-        item.items = newItems;
-      });
-    }
-  }
-}
-*/
+const spacers = ref(0);
 
 const data = computed(() => {
+  let groupedData = [
+      {
+        level: 0,
+        __items: [...props.rows],
+      },
+    ];
+
   if (props.groupBy) {
     const groups = props.groupBy.split(",").map((s: string) => s.trim());
 
     if (groups.length > 0) {
-      let groupedData = [
-        {
-          level: 0,
-          items: [...props.rows],
-        },
-      ];
-
       var grouper = new DataGrouper();
       grouper.groupData(groups, groupedData, props.columns, 1);
-      console.log(groupedData);
+      spacers.value = grouper.maxLevel;
     }
   }
 
-  return props.rows;
+  return groupedData[0].__items;
 });
 </script>
 
 <template>
   <table>
     <thead>
-      <header-row :columns="props.columns" :detail="rowDetail" />
+      <header-row :columns="props.columns" :detail="rowDetail" :spacers="spacers" />
     </thead>
     <tbody>
-      <body-row
-        v-for="row in data"
-        :key="row.id"
-        :columns="props.columns"
-        :row="row"
-        :detail="rowDetail"
-      />
+      <template v-for="row in data" :key="row.id">
+        <group-row v-if="row.__items" :columns="props.columns" :row="row" :detail="rowDetail" :spacers="spacers" />
+        <body-row v-else :columns="props.columns" :row="row" :detail="rowDetail" :spacers="spacers" />
+      </template>
     </tbody>
   </table>
 </template>

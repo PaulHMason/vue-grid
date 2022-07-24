@@ -10,9 +10,12 @@ export type Column = {
 }
 
 export class DataGrouper {
+    public maxLevel: number = 0;
+
     groupData(groups: Array<string>, data: any, columns: any, level: number) {
         //console.log(data);
         if (groups && groups.length > 0) {
+            this.maxLevel = level;
             const column = columns.find((c: any) => c.id === groups[0]);
 
             if (column) {
@@ -24,14 +27,14 @@ export class DataGrouper {
                     // If it has items, group them and replace the array.
                     const newItems: Array<any> = [];
 
-                    if (item.items && item.items.length > 0) {
-                        const unique = [...new Set(item.items.map((i: any) => i[field]))];
+                    if (item.__items && item.__items.length > 0) {
+                        const unique = [...new Set(item.__items.map((i: any) => i[field]))];
 
                         unique.forEach((i: any) => {
                             newItems.push({
                                 level: level,
                                 label: `${label}: ${i}`,
-                                items: item.items.filter((f: any) => f[field] === i),
+                                __items: item.__items.filter((f: any) => f[field] === i),
                             });
                         });
                     }
@@ -46,7 +49,7 @@ export class DataGrouper {
                         */
                     }
 
-                    item.items = newItems;
+                    item.__items = newItems;
                 });
             }
         }
