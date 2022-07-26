@@ -1,30 +1,53 @@
 <script setup lang="ts">
-    import { defineProps } from 'vue';
+    import { defineProps, defineEmits } from 'vue';
     import HeaderCell from './HeaderCell.vue';
     import RowSpacer from './RowSpacer.vue';
+    import RowSelector from './RowSelector.vue';
 
-    const props = defineProps(['columns', 'detail', 'spacers']);
+    const emit = defineEmits(['sort']);
+    const props = defineProps(['columns', 'detail', 'spacers', 'selectionMode', 'selectionState']);
+
+    function handleSort(column: any, direction: string) {
+        emit('sort', column, direction);
+    }
+
+    function toggleSelection() {
+        const event = new CustomEvent('rowselectall', { 
+            detail: {
+                state: props.selectionState
+            }
+        });
+        dispatchEvent(event);
+    }
 </script>
 
 <template>
     <tr>
-        <th v-if="props.detail" class="detail-filler"></th>
+        <th v-if="props.selectionMode !== 'none'" class="detail-filler">
+            <RowSelector v-if="props.selectionMode === 'multi'" :selected="props.selectionState !== 'none'" :indeterminate="props.selectionState === 'some'" @select="toggleSelection" />
+        </th>
+        <th v-if="props.detail"><RowSpacer /></th>
         <th v-for="i in props.spacers" :key="i"><RowSpacer /></th>
-        <header-cell v-for="column in props.columns" :key="column.label" :column="column"></header-cell>
+        <header-cell v-for="column in props.columns" :key="column.label" :column="column" @sort="handleSort" />
+        <th class="filler"></th>
     </tr>
 </template>
 
 <style scoped>
     tr {
-        height: 56px;
-        font-size: 14px;
+        height: var(--table-header-height);
         background-color: #FAFAFA;
         border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+        user-select: none;
     }
 
     .detail-filler {
-        padding: 1px 16px;
-        width: 48px;
+        padding: 0;
+        box-sizing: border-box;
         border-right: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .filler {
+        width: 99%;
     }
 </style>

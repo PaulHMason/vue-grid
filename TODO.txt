@@ -1,0 +1,20 @@
+IMPROVEMENTS
+============
+[ ] Refactor internal state (3).
+[ ] Ensure that UI updates correctly on state change (column, row, group) (3).
+[ ] Clean up styling (use CSS custom variables, etc.) (2).
+[ ] Fix sorting (column and group) - sorting by columns seems to sort groups (2)?
+[x] Be able to specify which groups are initially expanded (by entire group) (2).
+[x] Add filler column to the right.
+TOTAL: 12
+
+FEATURES
+========
+[ ] Add drag & drop group bar (3).
+[ ] Add filter bar (5).
+[ ] Add paging support (3).
+[ ] Add datetime visualizer (1).
+[ ] Add array value support (and default visualizer) (2).
+[ ] Add formatter support to columns - simpler than visualizers (3).
+[ ] Add total/footer row - should apply to each group as well.
+TOTAL: 17

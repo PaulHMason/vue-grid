@@ -9,7 +9,7 @@
 </script>
 
 <template>
-    <div>~{{getValue()}}</div>
+    <div>${{getValue()}}</div>
 </template>
 
 <style scoped>

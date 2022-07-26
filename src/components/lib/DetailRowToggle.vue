@@ -14,13 +14,14 @@
 
 <style scoped>
     td {
-        padding: 1px 16px;
+        padding: 1px;
         cursor: pointer;
         background-color: #FAFAFA;
         border-right: 1px solid rgba(0, 0, 0, 0.12);
     }
 
     .container {
+        width: var(--table-spacer-size);
         display: flex;
         align-items: center;
         justify-content: center;

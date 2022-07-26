@@ -13,7 +13,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 100px;
+        height: 64px;
         background-color: lightyellow;
     }
 </style>

@@ -5,6 +5,6 @@
 
 <style scoped>
     .container {
-        width: 46px !important;
+        width: 0px;
     }
 </style>

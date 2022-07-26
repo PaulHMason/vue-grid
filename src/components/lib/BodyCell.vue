@@ -17,14 +17,15 @@
         <component v-if="column.visualizer" :is="column.visualizer" :column="props.column" :row="props.row" />
         <number-visualizer v-else-if="column.type === 'number'" :value="getValue()" />
         <boolean-visualizer v-else-if="column.type === 'boolean'" :value="getValue()" />
-        <action-visualizer v-else-if="column.type === 'action'" :value="props.column.actionLabel" :action="props.column.actionFunction" :row-id="props.row.idd" />
+        <action-visualizer v-else-if="column.type === 'action'" :value="props.column.actionLabel" :action="props.column.actionFunction" :row-id="props.row.id" />
         <text-visualizer v-else :value="getValue()" />
     </td>
 </template>
 
 <style scoped>
     td {
-        padding: 1px 16px;
+        padding: 1px 16px 1px 24px;
+        box-sizing: border-box;
         white-space: nowrap;
     }
 </style>

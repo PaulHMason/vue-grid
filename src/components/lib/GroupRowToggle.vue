@@ -12,9 +12,8 @@
 
 <style scoped>
     .container {
-        padding: 1px 16px;
-        height: 40px;
         display: flex;
+        width: var(--table-spacer-size);
         align-items: center;
         justify-content: center;
         cursor: pointer;

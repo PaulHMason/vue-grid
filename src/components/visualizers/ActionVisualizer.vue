@@ -21,7 +21,7 @@
         text-transform: uppercase;
         font-weight: 500;
         border: none;
-        padding: 8px 16px;
+        padding: 4px 16px;
         border-radius: 4px;
         background-color: transparent;
         color: cornflowerblue;
