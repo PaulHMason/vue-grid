@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { defineProps, ref, onMounted, onUnmounted, shallowRef, computed } from "vue";
-import { DataGrouper, type Column, type Group } from "./DataTableTypes.js";
+import { defineProps, ref, onMounted, onUnmounted, computed } from "vue";
+
+import { type Column, type Group } from "./DataTableTypes.js";
+import { DataTableState } from './DataTableState.js';
 import HeaderRow from "./lib/HeaderRow.vue";
 import BodyRow from "./lib/BodyRow.vue";
 import GroupRow from "./lib/GroupRow.vue";
@@ -18,118 +20,77 @@ const props = defineProps([
   'sortDirection'
 ]);
 
-const supportGrouping = computed(() => {
-  return props.columns.find((column: Column) => column.groupable) ? true : false;
-});
+const renderKey = ref(0);
 
-const groupBy: any = computed(() => {
-  const groupableColumns = props.columns.filter((column: Column) => column.groupable && column.grouped);
-
-  const result: Array<Group> = groupableColumns.map((column: Column) => {
-    return {
-      columnId: column.id,
-      label: column.label,
-      sortable: column.groupSortable,
-      sort: column.groupSort,
-      visualizer: column.groupVisualizer
-    }
-  });
-
-  if (props.groupOrder && props.groupOrder.length > 0) {
-    return result.sort((a, b) => props.groupOrder.indexOf(a.columnId) - props.groupOrder.indexOf(b.columnId));
+function stateUpdated(reason?: string) {
+  if (renderKey.value > 1000000) {
+    renderKey.value = 0;
   } else {
-    return result;
+    renderKey.value += 1;
   }
-});
-
-const openGroups = computed(() => {
-  if (!props.openGroup) return [];
-
-  const allGroups = groupBy.value.map((group: any) => group.columnId);
-  const i = allGroups.indexOf(props.openGroup);
-  return i > -1 ? allGroups.slice(0, i + 1) : [];
-});
-
-function group(rows: any) {
-  let groupedData = [
-    {
-      level: 0,
-      __items: [...rows],
-    },
-  ];
-
-  if (groupBy) {
-    if (groupBy.value.length > 0) {
-      grouper.groupData([...groupBy.value], groupedData, props.columns, 1);
-      spacers.value = grouper.maxLevel;
-    }
-  }
-
-  return groupedData[0].__items;
 }
 
-const spacers = ref(0);
-const selectionState = ref('none');
-const grouper = new DataGrouper();
-const data = shallowRef(group(props.rows));
+const state: DataTableState = computed(() => {
+  return new DataTableState(props.columns, props.rows, props.groupOrder, props.openGroup, props.selectionMode, stateUpdated);
+});
 
-function handleSort(column: Column, direction: any) {
-  grouper.maxLevel = 0;
-  grouper.sortData(props.rows, column, direction);
-  data.value = group(props.rows);
+function handleSort(columnId: string) {
+  state.value.sort(columnId);
 }
 
 function onRowSelectAll(e: any) {
   e.preventDefault();
   e.stopPropagation();
-  setSelectionState();
+  state.value.toggleAllRows(e.detail.selected);
 }
 
 function onRowSelect(e: any) {
   e.preventDefault();
   e.stopPropagation();
-  setSelectionState();
+  state.value.toggleSingleRow(e.detail.selected, e.detail.id);
 }
 
-function setSelectionState() {
-  const rowCount = props.rows.length;
-  const selectedRowCount = props.rows.filter((row: any) => row.selected).length;
+function onAddGroup(e: any) {
+  e.preventDefault();
+  e.stopPropagation();
+  state.value.addGroup(e.detail.id, e.detail.index);
+}
 
-  if (selectedRowCount === 0) {
-    selectionState.value = 'none';
-  } else if (selectedRowCount === rowCount) {
-    selectionState.value = 'all';
-  } else {
-    selectionState.value = 'some';
-  }
+function onRemoveGroup(e: any) {
+  e.preventDefault();
+  e.stopPropagation();
+  state.value.removeGroup(e.detail.id);
 }
 
 onMounted(() => {
   addEventListener('rowselect', onRowSelect);
   addEventListener('rowselectall', onRowSelectAll);
-  setSelectionState();
+  addEventListener('addgroup', onAddGroup);
+  addEventListener('removegroup', onRemoveGroup);
 });
 
 onUnmounted(() => {
   removeEventListener('rowselect', onRowSelect);
   removeEventListener('rowselectall', onRowSelectAll);
+  removeEventListener('addgroup', onAddGroup);
+  removeEventListener('removegroup', onRemoveGroup);
 });
 </script>
 
 <template>
   <div class="table-container">
-    <Grouper v-if="supportGrouping" :groups="groupBy" />
+    <Grouper v-if="state.supportGrouping" :groups="state.groupBy" @sort="handleSort" />
     <table>
       <thead>
-        <header-row :columns="props.columns" :detail="rowDetail" :spacers="spacers" :selection-mode="selectionMode"
-          :selection-state="selectionState" @sort="handleSort" />
+        <header-row :columns="state.columns" :detail="rowDetail" :spacers="state.maxLevel" :selection-mode="state.selectionMode"
+          :selection-state="state.selectionState" @sort="handleSort" :key="renderKey" />
       </thead>
       <tbody>
-        <template v-for="row in data" :key="row.id">
-          <group-row v-if="row.__items" :columns="props.columns" :row="row" :detail="rowDetail" :spacers="spacers"
-            :selection-mode="selectionMode" :open-groups="openGroups" />
-          <body-row v-else :columns="props.columns" :row="row" :detail="rowDetail" :spacers="spacers"
-            :selection-mode="selectionMode" />
+        <template v-for="row in state.groups" :key="row.id">
+          <group-row v-if="row.__items" :columns="state.columns" :row="row" :detail="rowDetail" :spacers="state.maxLevel"
+            :selection-mode="state.selectionMode" :open-groups="state.openGroups" :render-key="renderKey"/>
+          <body-row v-else :columns="state.columns" :row="row" :detail="rowDetail" :spacers="state.maxLevel"
+            :selection-mode="state.selectionMode" :key="renderKey" />
         </template>
       </tbody>
     </table>

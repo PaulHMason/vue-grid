@@ -6,7 +6,7 @@
     import NumberVisualizer from '../visualizers/NumberVisualizer.vue';
     import BooleanVisualizer from '../visualizers/BooleanVisualizer.vue';
 
-    const props = defineProps(['columns', 'row', 'detail', 'spacers', 'selectionMode', 'openGroups']);
+    const props = defineProps(['columns', 'row', 'detail', 'spacers', 'selectionMode', 'openGroups', 'renderKey']);
     const showDetail = ref(false);
 
     function getOffset() {
@@ -39,8 +39,8 @@
     </tr>
     <template v-if="showDetail">
         <template v-for="row in row.__items" :key="row.id">
-            <group-row v-if="row.__items" :columns="props.columns" :row="row" :detail="detail" :spacers="spacers" :selection-mode="selectionMode" :open-groups="props.openGroups" />
-            <body-row v-else :columns="props.columns" :row="row" :detail="detail" :spacers="spacers" :selection-mode="selectionMode" />
+            <group-row v-if="row.__items" :columns="props.columns" :row="row" :detail="detail" :spacers="spacers" :selection-mode="selectionMode" :open-groups="props.openGroups" :render-key="renderKey" />
+            <body-row v-else :columns="props.columns" :row="row" :detail="detail" :spacers="spacers" :selection-mode="selectionMode" :key="renderKey"/>
         </template>
     </template>
     

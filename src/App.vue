@@ -5,7 +5,7 @@
 </script>
 
 <template>
-  <data-table :columns="columns" :rows="rows" :row-detail="RowDetail" :group-order="groupOrder" open-group="available" selection-mode="multi" class="table"></data-table>
+  <data-table :columns="columns" :rows="rows" :row-detail="RowDetail" :group-order="groupOrder" open-group="available" selection-mode="multiple" class="table"></data-table>
 </template>
 
 <style scoped>

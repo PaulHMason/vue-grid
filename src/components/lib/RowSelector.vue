@@ -1,16 +1,19 @@
 <script setup lang="ts">
-    import { defineProps, defineEmits } from 'vue';
+    import { defineProps, defineEmits, ref } from 'vue';
     const props = defineProps(['selected', 'indeterminate']);
     const emit = defineEmits(['select']);
+    const input = ref(null);
 
     function onSelect() {
-        emit('select');
+        if (input.value) {
+            emit('select', (input.value as any).checked);
+        }
     }
 </script>
 
 <template>
     <div class="container">
-        <input type="checkbox" :checked="props.selected" :indeterminate="props.indeterminate" @change="onSelect" />
+        <input type="checkbox" :checked="props.selected" :indeterminate="props.indeterminate" @change="onSelect" ref="input" />
     </div>
 </template>
 

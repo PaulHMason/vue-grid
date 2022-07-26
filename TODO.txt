@@ -1,20 +1,27 @@
 IMPROVEMENTS
 ============
-[ ] Refactor internal state (3).
-[ ] Ensure that UI updates correctly on state change (column, row, group) (3).
+[x] Refactor internal state (3).
+[x] Ensure that UI updates correctly on state change (column, row, group) (3).
 [ ] Clean up styling (use CSS custom variables, etc.) (2).
 [ ] Fix sorting (column and group) - sorting by columns seems to sort groups (2)?
-[x] Be able to specify which groups are initially expanded (by entire group) (2).
+[ ] Be able to specify which groups are initially expanded (by entire group) (2).
 [x] Add filler column to the right.
-TOTAL: 12
+[ ] Look at moving sort details off the column and remove 'none (1).
+TOTAL: 6/13
 
 FEATURES
 ========
-[ ] Add drag & drop group bar (3).
+[x] Add drag & drop group bar (3).
 [ ] Add filter bar (5).
 [ ] Add paging support (3).
+[ ] Add fixed columns (3)
 [ ] Add datetime visualizer (1).
 [ ] Add array value support (and default visualizer) (2).
 [ ] Add formatter support to columns - simpler than visualizers (3).
 [ ] Add total/footer row - should apply to each group as well.
-TOTAL: 17
+TOTAL: 3/20
+
+FIXES
+=====
+[ ] Remove the tiny collapsed spacers in the header that shift slightly when groups are added.
+[ ] The sort icon doesn't act right when sort starts from 'none'. Maybe don't even have 'none' as an option?

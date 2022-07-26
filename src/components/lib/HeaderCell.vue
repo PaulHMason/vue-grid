@@ -4,20 +4,23 @@ import SvgIcon from '../visualizers/SvgIcon.vue';
 
 const props = defineProps(['column']);
 const emit = defineEmits(['sort']);
-const sortAsc = ref(false);
 
 function click() {
     if (props.column.sortable) {
-        sortAsc.value = !sortAsc.value;
-        emit('sort', props.column, sortAsc.value ? 'asc' : 'desc');
+        emit('sort', props.column.id);
     }
+}
+
+function dragStart(e: any) {
+    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.setData('text/plain', props.column.id);
 }
 </script>
 
 <template>
-    <th @click="click" :class="column.sortable ? 'sortable' : ''">
+    <th @click="click" :class="column.sortable ? 'sortable' : ''" :draggable="column.groupable && !column.grouped" @dragstart="dragStart">
         <div class="container">
-            <svg-icon v-if="column.sortable" icon="arrow-up" :class="sortAsc ? 'icon' : 'icon icon-desc'" />
+            <svg-icon v-if="column.sortable" icon="arrow-up" :class="column.sort !== 'desc' ? 'icon' : 'icon icon-desc'" />
             <span>{{ props.column.label }}</span>
         </div>
     </th>

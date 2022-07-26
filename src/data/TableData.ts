@@ -15,8 +15,6 @@ export const groups: Array<Group> = [
     },
     {
         columnId: 'rating',
-        sortable: true,
-        sort: 'desc',
         visualizer: RatingVisualizer
     }
 ];
@@ -24,7 +22,7 @@ export const groups: Array<Group> = [
 
 export const columns: Array<Column> = [
     { id: 'dessert', label: 'Dessert (100g serving)', field: 'dessert', type: 'text', freeze: 'left', sortable: true },
-    { id: 'price', label: 'Price', field: 'price', type: 'number', visualizer: CustomVisualizer, sortable: true },
+    { id: 'price', label: 'Price', field: 'price', type: 'number', visualizer: CustomVisualizer, sortable: false, groupable: true, grouped: false },
     { id: 'calories', label: 'Calories', field: 'calories', type: 'number' },
     { id: 'fat', label: 'Fat (g)', field: 'fat', type: 'number' },
     { id: 'carbs', label: 'Carbs (g)', field: 'carbs', type: 'number' },
@@ -32,8 +30,8 @@ export const columns: Array<Column> = [
     { id: 'sodium', label: 'Sodium (mg)', field: 'sodium', type: 'number' },
     { id: 'calcium', label: 'Calcium (%)', field: 'calcium', type: 'number' },  
     { id: 'iron', label: 'Iron (%)', field: 'iron', type: 'number' },
-    { id: 'available', label: 'In Stock', field: 'available', type: 'boolean', sortable: true, groupable: true, grouped: true, groupSortable: true, groupSort: 'asc' },
-    { id: 'rating', label: 'Rating', field: 'rating', type: 'number', visualizer: RatingVisualizer, sortable: true , groupable: true, grouped: true, groupSortable: true, groupSort: 'asc', groupVisualizer: RatingVisualizer },
+    { id: 'available', label: 'In Stock', field: 'available', type: 'boolean', sortable: true, groupable: true, grouped: true },
+    { id: 'rating', label: 'Rating', field: 'rating', type: 'number', visualizer: RatingVisualizer, sortable: true , groupable: true, grouped: true, groupVisualizer: RatingVisualizer },
     { id: 'add', label: 'Add to Cart', field: '', type: 'action', actionLabel: 'Add', actionFunction: (id: any) => console.log(`ACTION: ${getText(id)}`), freeze: 'right' }
 ];
 

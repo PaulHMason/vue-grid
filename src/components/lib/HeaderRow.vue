@@ -7,14 +7,14 @@
     const emit = defineEmits(['sort']);
     const props = defineProps(['columns', 'detail', 'spacers', 'selectionMode', 'selectionState']);
 
-    function handleSort(column: any, direction: string) {
-        emit('sort', column, direction);
+    function handleSort(columnId: string) {
+        emit('sort', columnId);
     }
 
-    function toggleSelection() {
+    function toggleSelection(selected: any) {
         const event = new CustomEvent('rowselectall', { 
             detail: {
-                state: props.selectionState
+                selected: selected
             }
         });
         dispatchEvent(event);
@@ -24,7 +24,7 @@
 <template>
     <tr>
         <th v-if="props.selectionMode !== 'none'" class="detail-filler">
-            <RowSelector v-if="props.selectionMode === 'multi'" :selected="props.selectionState !== 'none'" :indeterminate="props.selectionState === 'some'" @select="toggleSelection" />
+            <RowSelector v-if="props.selectionMode === 'multiple'" :selected="props.selectionState !== 'none'" :indeterminate="props.selectionState === 'some'" @select="toggleSelection" />
         </th>
         <th v-if="props.detail"><RowSpacer /></th>
         <th v-for="i in props.spacers" :key="i"><RowSpacer /></th>
