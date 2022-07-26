@@ -42,7 +42,7 @@ tr {
     height: var(--table-body-height);
     font-weight: 400;
     box-sizing: border-box;
-    /*border-bottom: 1px solid rgba(0, 0, 0, 0.12);*/
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 tr:last-of-type {
