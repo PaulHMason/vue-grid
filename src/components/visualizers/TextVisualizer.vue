@@ -1,11 +1,19 @@
 <script setup lang="ts">
-    import { defineProps } from 'vue';
+    import { defineProps, computed } from 'vue';
 
-    const props = defineProps(['value']);
+    const props = defineProps(['value', 'column']);
+
+    const displayValue = computed(() => {
+        if (props.column && props.column.formatFunction) {
+            return props.column.formatFunction(props.value);
+        }
+
+        return props.value;
+    });
 </script>
 
 <template>
-    <div>{{props.value}}</div>
+    <div>{{displayValue}}</div>
 </template>
 
 <style scoped>

@@ -1,17 +1,23 @@
 <script setup lang="ts">
-    import { defineProps } from 'vue';
+import { defineProps } from 'vue';
 
-    const props = defineProps(['column', 'row']);
+const props = defineProps(['column', 'row', 'value']);
 
-    function getValue() {
-        return props.row[props.column.field];
+function getValue() {
+    if (props.value !== undefined) {
+        return props.value.toFixed(2);
     }
+
+    return props.row ? props.row[props.column?.field].toFixed(2) : '';
+}
 </script>
 
 <template>
-    <div>${{getValue()}}</div>
+    <div class="container">${{getValue()}}</div>
 </template>
 
 <style scoped>
-
+    .container {
+        text-align: right;
+    }
 </style>

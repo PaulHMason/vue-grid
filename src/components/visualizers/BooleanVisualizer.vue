@@ -1,13 +1,21 @@
 <script setup lang="ts">
-    import { defineProps } from 'vue';
+    import { defineProps, computed } from 'vue';
     import SvgIcon from '../visualizers/SvgIcon.vue';
 
-    const props = defineProps(['value']);
+    const props = defineProps(['value', 'column']);
+
+    const displayValue = computed(() => {
+        if (props.column && props.column.formatFunction) {
+            return props.column.formatFunction(props.value);
+        }
+
+        return props.value;
+    });
 </script>
 
 <template>
     <div class="container">
-        <svg-icon v-if="props.value === true" icon="check" class="true"/>
+        <svg-icon v-if="displayValue === true" icon="check" class="true"/>
         <svg-icon v-else icon="cross" class="false"/>
     </div>
 </template>

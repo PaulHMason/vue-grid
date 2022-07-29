@@ -8,7 +8,7 @@
             return props.column.formatFunction(props.value);
         }
 
-        return props.value;
+        return props.value.toLocaleDateString();
     });
 </script>
 
@@ -17,7 +17,5 @@
 </template>
 
 <style scoped>
-    div {
-        text-align: right;
-    }
+
 </style>

@@ -1,12 +1,11 @@
 <script setup lang="ts">
     import { defineProps } from 'vue';
-
     const props = defineProps(['value', 'action', 'rowId']);
 </script>
 
 <template>
     <div class="container">
-        <button @click="props.action(props.rowId)">{{props.value}}</button>
+        <button @click="props.action ? props.action(props.rowId) : null">{{props.value}}</button>
     </div>
 </template>
 

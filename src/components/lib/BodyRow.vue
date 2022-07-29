@@ -1,21 +1,28 @@
 <script setup lang="ts">
-import { defineProps, ref } from "vue";
+import { defineProps, ref, onMounted } from "vue";
 import BodyCell from "./BodyCell.vue";
 import DetailRowToggle from "./DetailRowToggle.vue";
 import RowSpacer from "./RowSpacer.vue";
 import RowSelector from "./RowSelector.vue";
 
 const props = defineProps([
-  "columns",
-  "row",
-  "detail",
-  "spacers",
-  "selectionMode",
+  'columns',
+  'row',
+  'detail',
+  'spacers',
+  'selectionMode',
+  'renderKey'
 ]);
-const showDetail = ref(false);
+
+const el = ref(null);
 
 function toggleDetail() {
-  showDetail.value = !showDetail.value;
+  const event = new CustomEvent('togglerow', { 
+    detail: {
+      id: props.row.id
+    }
+  });
+  dispatchEvent(event);
 }
 
 function toggleSelection(selected: any) {
@@ -26,35 +33,47 @@ function toggleSelection(selected: any) {
     },
   });
   dispatchEvent(event);
-  /*
-    props.row.selected = !props.row.selected;
-    const event = new CustomEvent('rowselect');
-    dispatchEvent(event);
-    */
 }
+
+onMounted(() => {
+  if (el.value) {
+    const fixed = (el.value as HTMLElement).querySelectorAll('.fixed');
+    let prev: any = null;
+    let offset = 0;
+
+    fixed.forEach((f: any, i: number) => {
+      if (prev) {
+        const rect = prev.getBoundingClientRect();
+        f.style.left = `${rect.right - offset}px`;
+
+        if (i === fixed.length - 1) {
+          f.classList.add('separator');
+        }
+      } else {
+        const rect = f.getBoundingClientRect();
+        offset = rect.left;
+      }
+
+      prev = f;
+    });
+  }
+});
 </script>
 
 <template>
-  <tr>
-    <td v-if="props.selectionMode !== 'none'" class="detail-filler">
+  <tr ref="el">
+    <th v-if="props.selectionMode !== 'none'" class="fixed separator">
       <RowSelector :selected="props.row.selected" @select="toggleSelection" />
+    </th>
+    <th v-if="props.detail" class="fixed separator">
+      <DetailRowToggle :showing="props.row._showDetail" @click="toggleDetail" />
+    </th>
+    <td v-for="column in props.columns" :key="column.label" :class="column.freeze ? 'fixed' : ''">
+      <body-cell :column="column" :row="row"></body-cell>
     </td>
-    <DetailRowToggle
-      v-if="props.detail"
-      :showing="showDetail"
-      @click="toggleDetail"
-    />
-    <td v-for="i in props.spacers" :key="i">
-      <RowSpacer />
-    </td>
-    <body-cell
-      v-for="column in props.columns"
-      :key="column.label"
-      :column="column"
-      :row="row"
-    ></body-cell>
+    <td></td>
   </tr>
-  <tr v-if="props.detail && showDetail" class="detail">
+  <tr v-if="props.detail && props.row._showDetail" class="detail">
     <td colspan="10000" class="detail">
       <component :is="props.detail" :row="props.row" />
     </td>
@@ -65,12 +84,18 @@ function toggleSelection(selected: any) {
 tr {
   height: var(--table-body-height);
   font-weight: 400;
-  box-sizing: border-box;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 tr:last-of-type {
   border-bottom: none;
+}
+
+td, th {
+    border-bottom: 1px solid var(--table-separator-color);
+}
+
+.separator {
+  border-right: 1px solid var(--table-separator-color);
 }
 
 tr.detail {
@@ -81,14 +106,10 @@ td.detail {
   padding: 0;
 }
 
-.spacer {
-  width: 48px;
-}
-
-.detail-filler {
-  padding: 1px;
-  box-sizing: border-box;
-  background-color: #fafafa;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
+.fixed {
+  position: sticky;
+  background-color: var(--table-fixed-color);
+  top: 0;
+  left: 0;
 }
 </style>

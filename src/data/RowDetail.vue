@@ -5,7 +5,7 @@
 </script>
 
 <template>
-    <div>{{row.dessert}}</div>
+    <div>{{row?.dessert}}</div>
 </template>
 
 <style scoped>
@@ -14,6 +14,6 @@
         align-items: center;
         justify-content: center;
         height: 64px;
-        background-color: lightyellow;
+        background-color: lavender;
     }
 </style>
