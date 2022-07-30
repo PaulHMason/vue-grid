@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { defineProps, computed, onBeforeMount } from 'vue';
+    import { defineProps, computed } from 'vue';
     import GroupRowToggle from './GroupRowToggle.vue';
     import BodyRow from './BodyRow.vue';
     import SummaryRow from './SummaryRow.vue';
@@ -7,7 +7,6 @@
     import NumberVisualizer from '../visualizers/NumberVisualizer.vue';
     import BooleanVisualizer from '../visualizers/BooleanVisualizer.vue';
     import DateVisualizer from '../visualizers/DateVisualizer.vue';
-import { rows } from '@/data/TableData';
 
     const props = defineProps(['columns', 'row', 'detail', 'spacers', 'selectionMode', 'openGroups', 'renderKey', 'showSummary']);
     //const showDetail = ref(false);

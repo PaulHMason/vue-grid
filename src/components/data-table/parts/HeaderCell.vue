@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref } from 'vue';
-import SvgIcon from '../visualizers/SvgIcon.vue';
+import SvgIcon from '../../svg-icon/SvgIcon.vue';
 
 const props = defineProps(['column', 'sortBy', 'sortDesc']);
 const emit = defineEmits(['sort']);
@@ -27,13 +27,15 @@ function getSortClasses() {
         classes.push('icon-fixed');
     }
 
+    console.log(classes.join(' '));
+
     return classes.join(' ');
 }
 </script>
 
 <template>
     <div @click="click" :class="column.sortable ? 'header-cell-container sortable' : 'header-cell-container'" :draggable="column.groupable && !column.grouped" @dragstart="dragStart">
-        <svg-icon v-if="column.sortable" icon="arrow-up" :class="getSortClasses()" />
+        <svg-icon v-if="column.sortable" icon="arrow-up" class="icon" />
         <span>{{ props.column.label }}</span>
     </div>
 </template>

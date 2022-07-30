@@ -3,12 +3,12 @@ import { defineProps, ref, onMounted, onUnmounted, shallowReactive } from "vue";
 
 //import { type Column, type Group } from "./DataTableTypes.js";
 import { DataTableState } from './DataTableState.js';
-import HeaderRow from "./lib/HeaderRow.vue";
-import BodyRow from "./lib/BodyRow.vue";
-import GroupRow from "./lib/GroupRow.vue";
-import Grouper from './lib/Grouper.vue';
-import SummaryRow from "./lib/SummaryRow.vue";
-import FilterRow from "./lib/FilterRow.vue";
+import HeaderRow from "./parts/HeaderRow.vue";
+import BodyRow from "./parts/BodyRow.vue";
+import GroupRow from "./parts/GroupRow.vue";
+import Grouper from './parts/Grouper.vue';
+import SummaryRow from "./parts/SummaryRow.vue";
+import FilterRow from "./parts/FilterRow.vue";
 import type { Column } from "./DataTableTypes.js";
 
 const props = defineProps({

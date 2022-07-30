@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { defineProps } from 'vue';
-    import SvgIcon from '../components/visualizers/SvgIcon.vue';
+    import SvgIcon from '../components/svg-icon/SvgIcon.vue';
     const props = defineProps(['column', 'row', 'value']);
 
     function getValue() {

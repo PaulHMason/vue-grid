@@ -1,6 +1,6 @@
 import CustomVisualizer from './CustomVisualizer.vue';
 import RatingVisualizer from './RatingVisualizer.vue';
-import type { Column } from '../components/DataTableTypes.js';
+import type { Column } from '../components/data-table/DataTableTypes.js';
 
 function getText(id: any) {
     return rows.find(row => row.id === id)?.dessert;

@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { defineProps } from 'vue';
-    import SvgIcon from '../visualizers/SvgIcon.vue';
+    import SvgIcon from '../../svg-icon/SvgIcon.vue';
     const props = defineProps(['showing']);
 </script>
 

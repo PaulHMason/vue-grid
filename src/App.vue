@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import DataTable from './components/DataTable.vue';
-  import RowDetail from './data/RowDetail.vue';
-  import { columns, rows, groupOrder } from './data/TableData';
+  import DataTable from './components/data-table/DataTable.vue';
+  import RowDetail from './demo/RowDetail.vue';
+  import { columns, rows, groupOrder } from './demo/TableData.js';
 </script>
 
 <template>
