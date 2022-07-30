@@ -13,17 +13,17 @@ function getDate(y: number, m: number, d: number) {
 }
 
 export const columns: Array<Column> = [
-    { id: 'dessert', label: 'Dessert (100g serving)', field: 'dessert', type: 'text', freeze: true, sortable: true },
-    { id: 'price', label: 'Price', field: 'price', type: 'number', freeze: true, visualizer: CustomVisualizer, sortable: true, groupable: true, grouped: false, summary: 'sum', filterable: true },
+    { id: 'dessert', label: 'Dessert (100g serving)', field: 'dessert', type: 'text', freeze: true, sortable: true, filterable: true },
+    { id: 'price', label: 'Price', field: 'price', type: 'number', freeze: true, visualizer: CustomVisualizer, sortable: true, groupable: true, grouped: false, summary: 'sum', filterable: false },
     { id: 'calories', label: 'Calories', field: 'calories', type: 'number', freeze: false },
-    { id: 'fat', label: 'Fat (g)', field: 'fat', type: 'number', freeze: false, summary: 'sum', filterable: true, formatFunction: (i: number) => `${i.toFixed(2)}g` },
+    { id: 'fat', label: 'Fat (g)', field: 'fat', type: 'number', freeze: false, summary: 'sum', filterable: false, formatFunction: (i: number) => `${i.toFixed(2)}g` },
     { id: 'carbs', label: 'Carbs (g)', field: 'carbs', type: 'number' },
     { id: 'protein', label: 'Protein (g)', field: 'protein', type: 'number' },
     { id: 'sodium', label: 'Sodium (mg)', field: 'sodium', type: 'number' },
     { id: 'calcium', label: 'Calcium (%)', field: 'calcium', type: 'number' },  
     { id: 'iron', label: 'Iron (%)', field: 'iron', type: 'number' },
     { id: 'available', label: 'In Stock', field: 'available', type: 'boolean', sortable: true, groupable: true, grouped: true },
-    { id: 'rating', label: 'Rating', field: 'rating', type: 'number', visualizer: RatingVisualizer, sortable: true , groupable: true, grouped: false, groupVisualizer: RatingVisualizer },
+    { id: 'rating', label: 'Rating', field: 'rating', type: 'number', visualizer: RatingVisualizer, sortable: true, filterable: true, groupable: true, grouped: false, groupVisualizer: RatingVisualizer },
     { id: 'released', label: 'Released', field: 'released', type: 'date', sortable: true, groupable: true, },
     { id: 'add', label: 'Add to Cart', field: '', type: 'action', actionLabel: 'Add', actionFunction: (id: any) => console.log(`ACTION: ${getText(id)}`), freeze: false }
 ];

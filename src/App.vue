@@ -6,7 +6,7 @@
 
 <template>
   <data-table class="table"  :columns="columns" :rows="rows" :row-detail="RowDetail" :group-order="groupOrder" open-group="available" selection-mode="multiple" 
-              group-summary filter-all hide-filterx></data-table>
+              group-summary filter-allx hide-filterx></data-table>
 </template>
 
 <style scoped>

@@ -30,3 +30,10 @@ export type Column = {
     summaryFunction?: Function,
     filterable?: boolean
 }
+
+export type ColumnFilter = {
+    id: string,
+    column: Column,
+    value?: any,
+    operator?: string
+}

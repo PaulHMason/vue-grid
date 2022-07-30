@@ -82,6 +82,12 @@ function onGroupToggle(e: any) {
   state.toggleGroupDetail(e.detail.group);
 }
 
+function onFilter(e: any) {
+  e.preventDefault();
+  e.stopPropagation();
+  state.filter(e.detail.columnId, e.detail.value, e.detail.operator);
+}
+
 function onLoad(e: any) {
   setTimeout(() => stateUpdated(), 250);
 }
@@ -93,6 +99,7 @@ onMounted(() => {
   addEventListener('removegroup', onRemoveGroup);
   addEventListener('togglerow', onRowToggle);
   addEventListener('togglegroup', onGroupToggle);
+  addEventListener('filter', onFilter);
   addEventListener('load', onLoad, {once : true});
 });
 
@@ -102,6 +109,7 @@ onUnmounted(() => {
   removeEventListener('addgroup', onAddGroup);
   removeEventListener('removegroup', onRemoveGroup);
   removeEventListener('togglerow', onRowToggle);
+  removeEventListener('filter', onFilter);
   removeEventListener('togglegroup', onGroupToggle);
 });
 </script>
@@ -113,7 +121,8 @@ onUnmounted(() => {
       <thead>
         <header-row :columns="state.columns" :detail="rowDetail" :spacers="state.maxLevel" :selection-mode="state.selectionMode"
           :selection-state="state.selectionState" @sort="handleSort" :sort-by="state.sortBy" :sort-desc="state.sortDesc" :key="renderKey" />
-        <filter-row v-if="state.filterVisible" :columns="state.columns" :detail="rowDetail" :spacers="state.maxLevel" :selection-mode="state.selectionMode" :key="renderKey" />
+        <filter-row v-if="state.filterVisible" :columns="state.columns" :filters="state.filters" :detail="rowDetail" :spacers="state.maxLevel" 
+          :selection-mode="state.selectionMode" />
       </thead>
       <tbody>
         

@@ -1,9 +1,10 @@
-import type { Column, Group, GroupState } from './DataTableTypes.js';
+import type { Column, Group, GroupState, ColumnFilter } from './DataTableTypes.js';
 
 type SelectionMode = 'none' | 'single' | 'multiple';
 
 export class DataTableState {
     private groupMap: Map<string, GroupState> = new Map<string, GroupState>();
+    private allRows?: Array<object> = [];
     private stateUpdated?: Function | null = null;
     public rows?: Array<object> = [];
     public columns?: Array<Column> = [];
@@ -22,6 +23,7 @@ export class DataTableState {
     public filterVisible: boolean = false;
     public filterAll?: boolean = false;
     public hideFilter?: boolean = true;
+    public filters?: Map<string, ColumnFilter> = new Map<string, ColumnFilter>();
 
     constructor(columns?: Array<Column>, rows?: Array<object>, groupOrder?: Array<string>, openGroup?: string, selectionMode?: SelectionMode, stateUpdated?: Function, 
                 filterAll?: boolean, hideFilter?: boolean) {
@@ -31,6 +33,7 @@ export class DataTableState {
     private init(columns?: Array<Column>, rows?: Array<object>, groupOrder?: Array<string>, openGroup?: string, selectionMode?: SelectionMode, stateUpdated?: Function, 
                 filterAll?: boolean, hideFilter?: boolean) {
         this.columns = columns;
+        this.allRows = Array.from(rows as any);
         this.rows = rows;
         this.groupOrder = groupOrder;
         this.openGroup = openGroup;
@@ -39,6 +42,7 @@ export class DataTableState {
         this.filterAll = filterAll;
         this.hideFilter = hideFilter;
 
+        this.updateFilters();
         this.updateFilterVisible();
         this.updateHasSummary();
         this.updateGroupBy();
@@ -49,6 +53,16 @@ export class DataTableState {
     }
 
     /* PUBLIC */
+    public filter(columnId: string, value: any, operator: string) {
+        const filter = this.filters?.get(columnId);
+
+        if (filter) {
+            filter.value = this.getFilterValue(value, filter.column.type);
+            filter.operator = operator;
+            this.filterRows(); 
+        }
+    }
+
     public sort(columnId?: string) {
         if (!columnId) {
             this.internalStateUpdated();
@@ -155,6 +169,88 @@ export class DataTableState {
         } else {
             this.filterVisible = this.columns?.find((c: Column) => c.filterable) ? true : false;
         }
+    }
+
+    private updateFilters() {
+        const filteredColumns = this.columns?.filter((column: Column) => (column.filterable || this.filterAll) && column.type !== 'action');
+        this.filters = new Map<string, ColumnFilter>();
+
+        filteredColumns?.forEach((column: Column) => {
+            (this.filters as any)?.set(column.id, {
+                id: column.id,
+                column: column
+            });
+        });
+    }
+
+    private getFilterValue(value: any, type: string): any {
+        if ((value === '') || (value === undefined)|| (value === null)) return undefined;
+
+        switch (type) {
+            case 'number': {
+                return Number(value);
+            }
+
+            case 'boolean': {
+                return Boolean(value);
+            }
+
+            case 'date': {
+                return new Date(value);
+            }
+
+            default: {
+                return value;
+            }
+        }  
+    }
+ 
+    private filterRows() {
+        const filters = [...(this.filters as any)?.values()].filter((f: any) => f.operator !== undefined && f.value !== undefined);
+
+        const filteredRows = this.allRows?.filter((row: any) => {
+            let keep = true;
+            
+            for (var i = 0; i < filters.length; i++) {
+                const filter: ColumnFilter = filters[i];
+                const column = filter.column;
+                const value = row[column.field as any];
+
+                if (!this.keepFilteredValue(filter.value, value, column.type, filter.operator as any)) {
+                    keep = false;
+                    break;
+                }
+            }
+
+            return keep;
+        });
+
+        this.rows = Array.from(filteredRows as any);
+        this.updateGroups();
+    }
+
+    private keepFilteredValue(filterValue: any, rowValue: any, type: string, operator: string): boolean {
+        switch (type) {
+            case 'text': {
+                return rowValue.toLowerCase().includes(filterValue.toLowerCase());
+            }
+
+            case 'number': {
+                return rowValue === filterValue;
+            }
+
+            case 'boolean': {
+                
+            }
+
+            case 'date': {
+                
+            }
+
+            default: {
+                return true;
+            }
+        }  
     }
 
     /* SUMMARY */ 

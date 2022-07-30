@@ -7,7 +7,8 @@ IMPROVEMENTS
 [x] Add filler column to the right.
 [x] Look at moving sort details off the column and remove 'none (1).
 [x] Sort appropriate groups if sorted by column.
-TOTAL: 11/11
+[ ] Fix keyboard navigation (4).
+TOTAL: 11/15
 
 FEATURES
 ========
@@ -15,14 +16,15 @@ FEATURES
 [x] Add total/footer/summary row - should apply to each group as well (4).
 [-] Add filter support (10).
 [ ] Add paging support (3).
-[ ] Add fixed columns (3)
+[x] Add fixed columns (3)
 [x] Add date support and visualizer (1).
 [ ] Add array value support (and default visualizer) (2).
 [x] Add formatter support to columns - simpler than visualizers (works with default and custom visualizers) (3).
 [ ] Add max group count (1).
-TOTAL: 11/30
+TOTAL: 14/30
 
 FIXES
 =====
 [-] Clean up styling (use CSS custom variables, etc.) (2).
-[ ] More than one frozen column jumps a bit (especially on Firefox).
+[x] More than one frozen column jumps a bit (especially on Firefox).
+[x] After ENTER on a filter focus is lost on the input - needs to stick.
