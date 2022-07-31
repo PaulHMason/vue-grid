@@ -125,6 +125,8 @@ tr:last-of-type {
 }
 
 td, th {
+    padding: 0;
+    box-sizing: border-box;
     border-bottom: 1px solid var(--table-separator-color);
 }
 

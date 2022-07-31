@@ -14,6 +14,7 @@
     .container {
         display: flex;
         width: var(--table-spacer-size);
+        height: var(--table-group-height);
         align-items: center;
         justify-content: center;
         cursor: pointer;
