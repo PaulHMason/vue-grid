@@ -161,6 +161,7 @@ onUnmounted(() => {
   --table-summary-bar-color: lightyellow;
   --table-filter-bar-color: slategray;
   --table-separator-color: #E0E0E0;
+  --table-body-selected-color: #FAFAFA;
   display: flex;
   flex-direction: column;
   height: 100%;

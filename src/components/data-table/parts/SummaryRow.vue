@@ -61,10 +61,21 @@
     onUpdated(() => {
         updateSpacers();
     });
+
+    function onKey(e: any, down: boolean) {
+        const row = e.target as any;
+        if (row) {
+            let nextRow = down ? row.nextElementSibling : row.previousElementSibling;
+
+            if (nextRow) {
+            nextRow.focus();
+            }
+        }
+    }
 </script>
 
 <template>
-    <tr ref="el">
+    <tr tabindex="0" ref="el" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
         <th v-if="props.detail" class="fixed"></th>
         <th v-if="props.selectionMode" class="fixed"></th>
         <template v-for="column in props.columns" :key="column.id">
@@ -82,6 +93,11 @@ tr {
     height: var(--table-group-height);
     font-weight: 500;
     background-color: var(--table-summary-bar-color);
+}
+
+tr:focus {
+    outline: 1px dashed blue;
+    outline-offset: -1px;
 }
 
 td, th {

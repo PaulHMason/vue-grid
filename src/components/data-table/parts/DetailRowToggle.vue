@@ -5,7 +5,7 @@
 </script>
 
 <template>
-    <div class="container">
+    <div tabindex="0" class="container">
         <svg-icon :icon="props.showing ? 'chevron-down' : 'chevron-right'" />
     </div>
 </template>
@@ -26,5 +26,10 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
+    }
+
+    .container:focus {
+        outline: 1px dashed blue;
+        outline-offset: -1px;
     }
 </style>

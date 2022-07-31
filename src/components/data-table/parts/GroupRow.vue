@@ -30,13 +30,24 @@
         });
         dispatchEvent(event);
     }
+
+    function onKey(e: any, down: boolean) {
+        const row = e.target as any;
+        if (row) {
+            let nextRow = down ? row.nextElementSibling : row.previousElementSibling;
+
+            if (nextRow) {
+            nextRow.focus();
+            }
+        }
+    }
 </script>
 
 <template>
-    <tr class="group">
+    <tr tabindex="0" class="group" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
         <td :colspan="props.columns.length - 4" class="group">
             <div class="group-row" :style="getOffset()">
-                <GroupRowToggle :showing="row.showDetail" @click="toggleDetail" />
+                <GroupRowToggle :showing="row.showDetail" @click="toggleDetail" @keyup.enter.stop.prevent="toggleDetail" />
                 <span class="group-label">{{row.column.label}}: </span>
                 <component v-if="row.visualizer" :is="row.visualizer" :column="row.column" :value="row.value" />
                 <number-visualizer v-else-if="row.column.type === 'number'" :value="row.value" :column="row.column" />
@@ -70,6 +81,11 @@
         box-sizing: border-box;
         font-weight: 500;
         background-color: var(--table-fixed-color);
+    }
+
+    tr:focus {
+        outline: 1px dashed blue;
+        outline-offset: -2px;
     }
 
     td {

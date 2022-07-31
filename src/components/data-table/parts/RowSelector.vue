@@ -13,7 +13,7 @@
 
 <template>
     <div class="container">
-        <input type="checkbox" :checked="props.selected" :indeterminate="props.indeterminate" @change="onSelect" ref="input" />
+        <input tabindex="0" type="checkbox" :checked="props.selected" :indeterminate="props.indeterminate" @change="onSelect" ref="input" />
     </div>
 </template>
 
@@ -29,5 +29,10 @@
         margin: 0;
         width: 16px;
         height: 16px;
+    }
+
+    input:focus {
+        outline: 1px dashed blue;
+        outline-offset: 1px;
     }
 </style>

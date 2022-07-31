@@ -32,8 +32,8 @@ function getSortClasses() {
 </script>
 
 <template>
-    <div @click="click" :class="column.sortable ? 'header-cell-container sortable' : 'header-cell-container'" :draggable="column.groupable && !column.grouped" @dragstart="dragStart">
-        <svg-icon v-if="column.sortable" icon="arrow-up" :class="getSortClasses()" />
+    <div @click.stop="click" :class="column.sortable ? 'header-cell-container sortable' : 'header-cell-container'" :draggable="column.groupable && !column.grouped" @dragstart="dragStart">
+        <svg-icon @keyup.enter.stop.prevent="click" tabindex="0" v-if="column.sortable" icon="arrow-up" :class="getSortClasses()" />
         <span>{{ props.column.label }}</span>
     </div>
 </template>
@@ -41,6 +41,11 @@ function getSortClasses() {
 <style scoped>
 svg {
     fill: rgba(0, 0, 0, 0.38);
+}
+
+svg:focus {
+    outline: 1px dashed blue;
+    outline-offset: -1px;
 }
 
 .header-cell-container {
@@ -72,7 +77,7 @@ svg {
     cursor: pointer;
 }
 
-.header-cell-container:hover .icon {
+.header-cell-container:hover .icon, .icon:focus {
     opacity: 1;
 }
 </style>

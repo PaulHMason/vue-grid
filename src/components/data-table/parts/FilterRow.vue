@@ -50,16 +50,27 @@
     onUpdated(() => {
         updateSpacers();
     });
+
+    function onKey(e: any, down: boolean) {
+        const row = e.target as any;
+        if (row) {
+            let nextRow = down ? row.nextElementSibling : row.previousElementSibling;
+
+            if (nextRow) {
+            nextRow.focus();
+            }
+        }
+    }
 </script>
 
 <template>
-    <tr ref="el">
+    <tr ref="el" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
         <th v-if="props.detail" class="fixed"></th>
         <th v-if="props.selectionMode" class="fixed"></th>
         <td v-for="column in props.columns" :key="column.id" :class="column.freeze ? 'fixed' : ''">
             <div v-if="props.filters.has(column.id)" class="editor">
                 <input name="filter-input" type="text" :value="props.filters.get(column.id).value" @change.stop="filterChanged($event, column)" />
-                <div class="clear" @click.stop="filterChanged($event, column, true)">
+                <div tabindex="0" class="clear" @click.stop="filterChanged($event, column, true)" @keyup.enter.stop="filterChanged($event, column, true)">
                     <svg-icon icon="cross" />
                 </div>
             </div>
@@ -112,7 +123,8 @@ input {
 }
 
 input:focus {
-    outline: none;
+    outline: 1px dashed blue;
+    outline-offset: -3px;
 }
 
 .clear {
@@ -124,5 +136,10 @@ input:focus {
     height: 16px;
     border-radius: 50%;
     cursor: pointer;
+}
+
+.clear:focus {
+    outline: 1px dashed blue;
+    outline-offset: -2px;
 }
 </style>

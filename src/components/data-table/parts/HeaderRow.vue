@@ -93,11 +93,4 @@
     .separator {
         border-right: 1px solid var(--table-separator-color);
     }
-
-/*
-    .fixed {
-        padding: 0;
-        border-right: 1px solid var(--table-separator-color);
-    }
-    */
 </style>

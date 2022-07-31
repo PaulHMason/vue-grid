@@ -30,4 +30,9 @@
     button:hover {
         background-color: #F0F0F0;
     }
+
+    button:focus {
+        outline: 1px dashed blue;
+        outline-offset: -1px;
+    }
 </style>
