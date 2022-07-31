@@ -48,3 +48,9 @@ TAB  : Navigate between form elements.
             Sort elements on header.
             Group elements on grouper.
 ARROW: Up/Down navigates between rows (needs row highlight).
+
+Editing
+=======
+Inline (on cell click or edit action).
+Form (row transforms into an inline form row, like the details).
+Popup (similar to the above, but a dialog).
