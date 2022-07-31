@@ -14,7 +14,8 @@ const props = defineProps([
   'updateKey'
 ]);
 
-const el = ref(null);
+const rowEl = ref(null);
+const detailEl = ref(null);
 
 function toggleDetail() {
   const event = new CustomEvent('togglerow', { 
@@ -36,8 +37,8 @@ function toggleSelection(selected: any) {
 }
 
 function updateSpacers() {
-  if (el.value) {
-    const fixed = (el.value as HTMLElement).querySelectorAll('.fixed');
+  if (rowEl.value) {
+    const fixed = (rowEl.value as HTMLElement).querySelectorAll('.fixed');
     let prev: any = null;
     let offset = 0;
 
@@ -60,7 +61,12 @@ function updateSpacers() {
 }
 
 function onKey(e: any, down: boolean) {
-  const row = e.target as any;
+  let row = e.target as any;
+
+  if (row !== detailEl.value) {
+    row = rowEl.value;
+  }
+
   if (row) {
     let nextRow = down ? row.nextElementSibling : row.previousElementSibling;
 
@@ -80,7 +86,7 @@ onUpdated(() => {
 </script>
 
 <template>
-  <tr ref="el" tabindex="0" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
+  <tr ref="rowEl" tabindex="0" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
     <th v-if="props.selectionMode !== 'none'" class="fixed separator">
       <RowSelector :selected="props.row.selected" @select="toggleSelection" />
     </th>
@@ -92,7 +98,7 @@ onUpdated(() => {
     </td>
     <td></td>
   </tr>
-  <tr v-if="props.detail && props.row._showDetail" class="detail" is-detail tabindex="0" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
+  <tr ref="detailEl" v-if="props.detail && props.row._showDetail" class="detail" is-detail tabindex="0" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
     <td colspan="10000" class="detail">
       <component :is="props.detail" :row="props.row" />
     </td>
@@ -105,11 +111,11 @@ tr {
   font-weight: 400;
 }
 
-tr:hover, tr:focus {
+tr:hover, tr:focus-within {
   background-color: var(--table-body-selected-color);
 }
 
-tr:focus {
+tr:focus-within {
   outline: 1px dashed blue;
   outline-offset: -1px;
 }

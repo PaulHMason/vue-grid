@@ -35,6 +35,7 @@ FIXES
 [-] Clean up styling (use CSS custom variables, etc.) (2).
 [x] More than one frozen column jumps a bit (especially on Firefox).
 [x] After ENTER on a filter focus is lost on the input - needs to stick. Tricky because it's being caused by the :key update.
+[ ] Allow row navigation if a child component has focus as well.
 
 https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_refs_focus_management
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { defineProps, computed } from 'vue';
+    import { defineProps, computed, ref } from 'vue';
     import GroupRowToggle from './GroupRowToggle.vue';
     import BodyRow from './BodyRow.vue';
     import SummaryRow from './SummaryRow.vue';
@@ -9,6 +9,7 @@
     import DateVisualizer from '../visualizers/DateVisualizer.vue';
 
     const props = defineProps(['columns', 'row', 'detail', 'spacers', 'selectionMode', 'openGroups', 'showSummary', 'updateKey']);
+    const el = ref(null);
 
     const isGroups = computed(() => {
         if (props.row.__items && props.row.__items.length > 0) {
@@ -32,19 +33,19 @@
     }
 
     function onKey(e: any, down: boolean) {
-        const row = e.target as any;
+        const row = el.value as any;
         if (row) {
             let nextRow = down ? row.nextElementSibling : row.previousElementSibling;
 
             if (nextRow) {
-            nextRow.focus();
+                nextRow.focus();
             }
         }
     }
 </script>
 
 <template>
-    <tr tabindex="0" class="group" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
+    <tr ref="el" tabindex="0" class="group" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)" @keyup.enter.stop.prevent="toggleDetail">
         <td :colspan="props.columns.length - 4" class="group">
             <div class="group-row" :style="getOffset()">
                 <GroupRowToggle :showing="row.showDetail" @click="toggleDetail" @keyup.enter.stop.prevent="toggleDetail" />

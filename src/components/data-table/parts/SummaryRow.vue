@@ -63,12 +63,12 @@
     });
 
     function onKey(e: any, down: boolean) {
-        const row = e.target as any;
+        const row = el.value as any;
         if (row) {
             let nextRow = down ? row.nextElementSibling : row.previousElementSibling;
 
             if (nextRow) {
-            nextRow.focus();
+                nextRow.focus();
             }
         }
     }
