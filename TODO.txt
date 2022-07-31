@@ -28,6 +28,7 @@ FEATURES
 [ ] Resizable columns.
 [ ] Reorder columns.
 [ ] Row editing.
+[ ] Ability to freeze a row at the top.
 TOTAL: 14/31
 
 FIXES
