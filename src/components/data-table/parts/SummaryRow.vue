@@ -1,17 +1,9 @@
 <script setup lang="ts">
     import RowSpacer from './RowSpacer.vue';
-    import { defineProps, computed, onMounted, ref } from 'vue';
+    import { defineProps, onMounted, onUpdated, ref } from 'vue';
     import SummaryCell from './SummaryCell.vue';
-    const props = defineProps(['columns', 'rows', 'spacers', 'detail', 'selectionMode', 'renderKey']);
+    const props = defineProps(['columns', 'rows', 'spacers', 'detail', 'selectionMode', 'updateKey']);
     const el = ref(null);
-    /*
-    const spacerCount = computed(() => {
-        let count = props.spacers;
-        if (props.detail) count++;
-        if (props.selectionMode !== 'none') count++;
-        return count;
-    });
-    */
 
     function getSummary(column: any) {
         switch (column.summary) {
@@ -39,7 +31,7 @@
         }
     }
 
-    onMounted(() => {
+    function updateSpacers() {
         if (el.value) {
             const fixed = (el.value as HTMLElement).querySelectorAll('.fixed');
             let prev: any = null;
@@ -60,6 +52,14 @@
 
             fixed[fixed.length - 1].classList.add('last-fixed');
         }
+    }
+
+    onMounted(() => {
+        updateSpacers();
+    });
+
+    onUpdated(() => {
+        updateSpacers();
     });
 </script>
 

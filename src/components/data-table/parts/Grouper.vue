@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { defineProps, defineEmits } from 'vue';
     import SvgIcon from '../../svg-icon/SvgIcon.vue';
-    const props = defineProps(['groups', 'sortBy', 'sortDesc', 'renderKey']);
+    const props = defineProps(['groups', 'sortBy', 'sortDesc']);
     const emit = defineEmits(['sort']);
 
     function remove(id: string) {
@@ -85,9 +85,6 @@
                 </div>
             </div>
         </template>
-        <!--
-        <div class="info">Drag columns here to group them.</div>
-        -->
     </div>
 </template>
 

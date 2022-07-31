@@ -27,15 +27,13 @@ function getSortClasses() {
         classes.push('icon-fixed');
     }
 
-    console.log(classes.join(' '));
-
-    return classes.join(' ');
+    return classes;
 }
 </script>
 
 <template>
     <div @click="click" :class="column.sortable ? 'header-cell-container sortable' : 'header-cell-container'" :draggable="column.groupable && !column.grouped" @dragstart="dragStart">
-        <svg-icon v-if="column.sortable" icon="arrow-up" class="icon" />
+        <svg-icon v-if="column.sortable" icon="arrow-up" :class="getSortClasses()" />
         <span>{{ props.column.label }}</span>
     </div>
 </template>

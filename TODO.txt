@@ -21,10 +21,16 @@ FEATURES
 [ ] Add array value support (and default visualizer) (2).
 [x] Add formatter support to columns - simpler than visualizers (works with default and custom visualizers) (3).
 [ ] Add max group count (1).
-TOTAL: 14/30
+[ ] Hidden colomns (1).
+[ ] Resizable columns.
+[ ] Reorder columns.
+[ ] Row editing.
+TOTAL: 14/31
 
 FIXES
 =====
 [-] Clean up styling (use CSS custom variables, etc.) (2).
 [x] More than one frozen column jumps a bit (especially on Firefox).
-[x] After ENTER on a filter focus is lost on the input - needs to stick.
+[ ] After ENTER on a filter focus is lost on the input - needs to stick. Tricky because it's being caused by the :key update.
+
+https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_refs_focus_management

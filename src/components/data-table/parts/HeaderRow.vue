@@ -1,10 +1,10 @@
 <script setup lang="ts">
-    import { defineProps, defineEmits, onMounted, ref } from 'vue';
+    import { defineProps, defineEmits, onMounted, onUpdated, ref } from 'vue';
     import HeaderCell from './HeaderCell.vue';
     import RowSelector from './RowSelector.vue';
 
     const emit = defineEmits(['sort']);
-    const props = defineProps(['columns', 'detail', 'spacers', 'selectionMode', 'selectionState', 'sortBy', 'sortDesc', 'renderKey']);
+    const props = defineProps(['columns', 'detail', 'spacers', 'selectionMode', 'selectionState', 'sortBy', 'sortDesc', 'updateKey']);
     const el = ref(null);
 
     function handleSort(columnId: string) {
@@ -20,7 +20,7 @@
         dispatchEvent(event);
     }
 
-    function recalc() {
+    function updateSpacers() {
         if (el.value) {
             const fixed = (el.value as HTMLElement).querySelectorAll('.fixed');
             let prev: any = null;
@@ -46,7 +46,11 @@
     }
 
     onMounted(() => {
-        recalc();
+        updateSpacers();
+    });
+
+    onUpdated(() => {
+        updateSpacers();
     });
 </script>
 
@@ -56,7 +60,7 @@
             <RowSelector v-if="props.selectionMode === 'multiple'" :selected="props.selectionState !== 'none'" :indeterminate="props.selectionState === 'some'" @select="toggleSelection" />
         </th>
         <th v-if="props.detail" class="fixed"></th>
-        <th v-for="column in props.columns" :key="column.label" :class="column.freeze ? 'fixed' : ''">
+        <th v-for="column in props.columns" :key="column.id" :class="column.freeze ? 'fixed' : ''">
             <header-cell :column="column" @sort="handleSort" :sort-by="sortBy" :sort-desc="sortDesc" />
         </th>
         <th class="filler"></th>

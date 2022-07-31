@@ -26,16 +26,13 @@ const props = defineProps({
     filterAll: Boolean
 });
 
-const renderKey = ref(0);
-const renderKey2 = ref(0);
+const updateKey = ref(0);
 
 function stateUpdated(reason?: string) {
-  if (renderKey.value > 1000000) {
-    renderKey.value = 0;
-    renderKey2.value = 0;
+  if (updateKey.value > 1000000) {
+    updateKey.value = 0;
   } else {
-    renderKey.value += 1;
-    renderKey2.value += 1;
+    updateKey.value += 1;
   }
 }
 
@@ -116,24 +113,25 @@ onUnmounted(() => {
 
 <template>
   <div class="table-container">
-    <Grouper v-if="state.supportGrouping" :groups="state.groupBy" :sort-by="state.sortBy" :sort-desc="state.sortDesc" @sort="handleSort" :key="renderKey" />
+    <Grouper v-if="state.supportGrouping" :groups="state.groupBy" :sort-by="state.sortBy" :sort-desc="state.sortDesc" @sort="handleSort" />
     <table>
       <thead>
         <header-row :columns="state.columns" :detail="rowDetail" :spacers="state.maxLevel" :selection-mode="state.selectionMode"
-          :selection-state="state.selectionState" @sort="handleSort" :sort-by="state.sortBy" :sort-desc="state.sortDesc" :key="renderKey" />
+          :selection-state="state.selectionState" @sort="handleSort" :sort-by="state.sortBy" :sort-desc="state.sortDesc" :update-key="updateKey" />
         <filter-row v-if="state.filterVisible" :columns="state.columns" :filters="state.filters" :detail="rowDetail" :spacers="state.maxLevel" 
-          :selection-mode="state.selectionMode" />
+          :selection-mode="state.selectionMode" :update-key="updateKey" />
       </thead>
       <tbody>
         
         <template v-for="row in state.groups" :key="row.id">
           <group-row v-if="row.__items" :columns="state.columns" :row="row" :detail="rowDetail" :spacers="state.maxLevel"
-            :selection-mode="state.selectionMode" :open-groups="state.openGroups" :render-key="renderKey" :key="renderKey" :show-summary="state.hasSummary && groupSummary" />
+            :selection-mode="state.selectionMode" :open-groups="state.openGroups" :show-summary="state.hasSummary && groupSummary" :key="row.id"
+            :update-key="updateKey" />
           <body-row v-else :columns="state.columns" :row="row" :detail="rowDetail" :spacers="state.maxLevel"
-            :selection-mode="state.selectionMode" :key="renderKey2" />
+            :selection-mode="state.selectionMode" :update-key="updateKey" />
         </template>
         <summary-row v-if="state.hasSummary && (!groupSummary || (groupSummary && state.maxLevel === 0))" :columns="state.columns" :rows="state.rows" 
-          :spacers="state.maxLevel" :detail="rowDetail" :selection-mode="state.selectionMode" :key="renderKey" />
+          :spacers="state.maxLevel" :detail="rowDetail" :selection-mode="state.selectionMode" :update-key="updateKey" />
       </tbody>
     </table>
   </div>

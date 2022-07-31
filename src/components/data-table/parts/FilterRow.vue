@@ -1,10 +1,10 @@
 <script setup lang="ts">
-    import { defineProps, ref, onMounted } from 'vue';
+    import { defineProps, ref, onMounted, onUpdated } from 'vue';
     import SvgIcon from '../../svg-icon/SvgIcon.vue';
-    const props = defineProps(['columns', 'filters', 'detail', 'selectionMode', 'spacers']);
+    const props = defineProps(['columns', 'filters', 'detail', 'selectionMode', 'spacers', 'updateKey']);
     const el = ref(null);
-
-    onMounted(() => {
+   
+    function updateSpacers() {
         if (el.value) {
             const fixed = (el.value as HTMLElement).querySelectorAll('.fixed');
             let prev: any = null;
@@ -27,9 +27,9 @@
                 prev = f;
             });
         }
-    });
+    }
 
-    function filterChanged(e, column: Column, clear: boolean = false) {
+    function filterChanged(e: any, column: any, clear: boolean = false) {
         let operator = '=';
         if (column.type === 'text') operator = 'contains';
 
@@ -42,16 +42,24 @@
         });
         dispatchEvent(event);
     }
+
+    onMounted(() => {
+        updateSpacers();
+    });
+
+    onUpdated(() => {
+        updateSpacers();
+    });
 </script>
 
 <template>
     <tr ref="el">
         <th v-if="props.detail" class="fixed"></th>
         <th v-if="props.selectionMode" class="fixed"></th>
-        <td v-for="column in props.columns" :key="column.label" :class="column.freeze ? 'fixed' : ''">
+        <td v-for="column in props.columns" :key="column.id" :class="column.freeze ? 'fixed' : ''">
             <div v-if="props.filters.has(column.id)" class="editor">
-                <input type="text" :value="props.filters.get(column.id).value" @change.stopPropagation="filterChanged($event, column)" />
-                <div class="clear" @click.stopPropagation="filterChanged($event, column, true)">
+                <input name="filter-input" type="text" :value="props.filters.get(column.id).value" @change.stop="filterChanged($event, column)" />
+                <div class="clear" @click.stop="filterChanged($event, column, true)">
                     <svg-icon icon="cross" />
                 </div>
             </div>
@@ -117,5 +125,4 @@ input:focus {
     border-radius: 50%;
     cursor: pointer;
 }
-
 </style>

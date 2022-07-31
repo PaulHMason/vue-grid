@@ -8,8 +8,7 @@
     import BooleanVisualizer from '../visualizers/BooleanVisualizer.vue';
     import DateVisualizer from '../visualizers/DateVisualizer.vue';
 
-    const props = defineProps(['columns', 'row', 'detail', 'spacers', 'selectionMode', 'openGroups', 'renderKey', 'showSummary']);
-    //const showDetail = ref(false);
+    const props = defineProps(['columns', 'row', 'detail', 'spacers', 'selectionMode', 'openGroups', 'showSummary', 'updateKey']);
 
     const isGroups = computed(() => {
         if (props.row.__items && props.row.__items.length > 0) {
@@ -49,12 +48,13 @@
         <td colspan="1000"></td>
     </tr>
     <template v-if="row.showDetail">
-        <template v-for="r in row.__items" :key="row.id">
+        <template v-for="r in row.__items" :key="r.id">
             <group-row v-if="isGroups" :columns="props.columns" :row="r" :detail="detail" :spacers="spacers" :selection-mode="selectionMode" :open-groups="props.openGroups" 
-                :show-summary="showSummary" :render-key="renderKey" :key="renderKey" />
-            <body-row v-else :columns="props.columns" :row="r" :detail="detail" :spacers="spacers" :selection-mode="selectionMode" :key="renderKey" />
+                :show-summary="showSummary" :update-key="props.updateKey" />
+            <body-row v-else :columns="props.columns" :row="r" :detail="detail" :spacers="spacers" :selection-mode="selectionMode" :update-key="props.updateKey" />
         </template>
-        <summary-row v-if="showSummary && !isGroups" :columns="props.columns" :rows="row.__items" :spacers="spacers" :detail="detail" :selection-mode="selectionMode"/>
+        <summary-row v-if="showSummary && !isGroups" :columns="props.columns" :rows="row.__items" :spacers="spacers" :detail="detail" :selection-mode="selectionMode" 
+            :update-key="props.updateKey" />
     </template> 
 </template>
 

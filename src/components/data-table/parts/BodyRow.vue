@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, ref, onMounted } from "vue";
+import { defineProps, ref, onMounted, onUpdated } from "vue";
 import BodyCell from "./BodyCell.vue";
 import DetailRowToggle from "./DetailRowToggle.vue";
 import RowSpacer from "./RowSpacer.vue";
@@ -10,8 +10,8 @@ const props = defineProps([
   'row',
   'detail',
   'spacers',
-  'selectionMode',
-  'renderKey'
+  'selectionMode', 
+  'updateKey'
 ]);
 
 const el = ref(null);
@@ -35,7 +35,7 @@ function toggleSelection(selected: any) {
   dispatchEvent(event);
 }
 
-onMounted(() => {
+function updateSpacers() {
   if (el.value) {
     const fixed = (el.value as HTMLElement).querySelectorAll('.fixed');
     let prev: any = null;
@@ -57,6 +57,14 @@ onMounted(() => {
       prev = f;
     });
   }
+}
+
+onMounted(() => {
+  updateSpacers();
+});
+
+onUpdated(() => {
+  updateSpacers();
 });
 </script>
 
@@ -68,7 +76,7 @@ onMounted(() => {
     <th v-if="props.detail" class="fixed separator">
       <DetailRowToggle :showing="props.row._showDetail" @click="toggleDetail" />
     </th>
-    <td v-for="column in props.columns" :key="column.label" :class="column.freeze ? 'fixed' : ''">
+    <td v-for="column in props.columns" :key="column.id" :class="column.freeze ? 'fixed' : ''">
       <body-cell :column="column" :row="row"></body-cell>
     </td>
     <td></td>
