@@ -7,36 +7,35 @@ IMPROVEMENTS
 [x] Add filler column to the right.
 [x] Look at moving sort details off the column and remove 'none (1).
 [x] Sort appropriate groups if sorted by column.
-[ ] Fix keyboard navigation (4).
-[ ] Row hover/highlight colour change.
-[ ] Toggle column and row separators/lines.
-TOTAL: 11/15
+[x] Fix keyboard navigation (4).
+[x] Row hover/highlight colour change.
+[x] Toggle column separators/lines (1).
+TOTAL: 16/16
 
 FEATURES
 ========
 [x] Add drag & drop group bar (3).
 [x] Add total/footer/summary row - should apply to each group as well (4).
 [-] Add filter support (10).
-[ ] Add paging support (3).
+[ ] Add paging support (7).
 [x] Add fixed columns (3)
 [x] Add date support and visualizer (1).
-[ ] Add array value support (and default visualizer) (2).
+[x] Add array value support (and default visualizer) (2).
 [x] Add formatter support to columns - simpler than visualizers (works with default and custom visualizers) (3).
 [ ] Add max group count (1).
-[ ] Hidden colomns (1).
-[ ] Column Groups (multilevel columns).
-[ ] Resizable columns.
-[ ] Reorder columns.
+[x] Hidden columns (1).
+[ ] Column Groups (multilevel columns)?
+[x] Resizable columns (2).
+[x] Reorder columns (1).
 [ ] Row editing.
 [ ] Ability to freeze a row at the top.
-TOTAL: 14/31
+[ ] Virtualization
+TOTAL: 20/38
 
 FIXES
 =====
 [-] Clean up styling (use CSS custom variables, etc.) (2).
-[x] More than one frozen column jumps a bit (especially on Firefox).
-[x] After ENTER on a filter focus is lost on the input - needs to stick. Tricky because it's being caused by the :key update.
-[ ] Allow row navigation if a child component has focus as well.
+
 
 https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_refs_focus_management
 

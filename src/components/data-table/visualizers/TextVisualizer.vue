@@ -17,5 +17,7 @@
 </template>
 
 <style scoped>
-
+    div {
+        text-overflow: ellipsis;
+    }
 </style>

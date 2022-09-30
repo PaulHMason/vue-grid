@@ -64,10 +64,10 @@
 </script>
 
 <template>
-    <tr ref="el" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
+    <tr data-row ref="el" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
         <th v-if="props.detail" class="fixed"></th>
         <th v-if="props.selectionMode" class="fixed"></th>
-        <td v-for="column in props.columns" :key="column.id" :class="column.freeze ? 'fixed' : ''">
+        <td v-for="column in props.columns.filter((c: any) => !c.hide)" :key="column.id" :class="column.freeze ? 'fixed' : ''">
             <div v-if="props.filters.has(column.id)" class="editor">
                 <input name="filter-input" type="text" :value="props.filters.get(column.id).value" @change.stop="filterChanged($event, column)" />
                 <div tabindex="0" class="clear" @click.stop="filterChanged($event, column, true)" @keyup.enter.stop="filterChanged($event, column, true)">
@@ -81,12 +81,12 @@
 
 <style scoped>
 tr {
-    height: var(--table-group-height);
+    height: var(--table-filter-height);
 }
 
 th, td {
     position: sticky;
-    top: 36px;  
+    top: calc(var(--table-header-height) + 1px);
     z-index: 998;
     box-sizing: border-box;
     padding: 0;
@@ -123,8 +123,8 @@ input {
 }
 
 input:focus {
-    outline: 1px dashed blue;
-    outline-offset: -3px;
+    outline: 2px solid var(--table-focus-color);
+    outline-offset: 1px;
 }
 
 .clear {
@@ -139,7 +139,7 @@ input:focus {
 }
 
 .clear:focus {
-    outline: 1px dashed blue;
-    outline-offset: -2px;
+    outline: 2px solid var(--table-focus-color);
+    outline-offset: 0px;
 }
 </style>

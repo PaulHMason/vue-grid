@@ -8,7 +8,7 @@
             return props.column.formatFunction(props.value);
         }
 
-        return props.value.toLocaleDateString();
+        return props.value.join(',');
     });
 </script>
 

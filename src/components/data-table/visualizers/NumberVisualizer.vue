@@ -19,5 +19,6 @@
 <style scoped>
     div {
         text-align: right;
+        text-overflow: ellipsis;
     }
 </style>

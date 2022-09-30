@@ -20,6 +20,7 @@
 <style scoped>
     .container {
         width: var(--table-spacer-size);
+        box-sizing: border-box;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -32,7 +33,7 @@
     }
 
     input:focus {
-        outline: 1px dashed blue;
+        outline: 2px solid var(--table-focus-color);
         outline-offset: 1px;
     }
 </style>

@@ -1,13 +1,22 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from 'vue';
+import { defineProps, computed } from 'vue';
+import { unsortableTypes } from '../DataTableTypes.js';
 import SvgIcon from '../../svg-icon/SvgIcon.vue';
 
-const props = defineProps(['column', 'sortBy', 'sortDesc']);
-const emit = defineEmits(['sort']);
+const props = defineProps(['column', 'sortBy', 'sortDesc', 'reorderColumns']);
+
+const canSort = computed(() => {
+    return props.column.sortable && (!unsortableTypes.includes(props.column.type) || props.column.sortFunction);
+});
 
 function click() {
     if (props.column.sortable) {
-        emit('sort', props.column.id);
+        const event = new CustomEvent('sort', { 
+            detail: {
+                id: props.column.id
+            }
+        });
+        dispatchEvent(event);
     }
 }
 
@@ -29,11 +38,25 @@ function getSortClasses() {
 
     return classes;
 }
+
+function group(e: any) {
+    if (e.ctrlKey && e.altKey && e.code === 'KeyG') {
+        console.log(e);
+        const event = new CustomEvent('addgroup', { 
+            detail: {
+                id: props.column.id,
+                index: -1
+            }
+        });
+        dispatchEvent(event);
+    }
+}
 </script>
 
 <template>
-    <div @click.stop="click" :class="column.sortable ? 'header-cell-container sortable' : 'header-cell-container'" :draggable="column.groupable && !column.grouped" @dragstart="dragStart">
-        <svg-icon @keyup.enter.stop.prevent="click" tabindex="0" v-if="column.sortable" icon="arrow-up" :class="getSortClasses()" />
+    <div tabindex="0" @click.stop="click" @keyup.ctrl.alt.stop.prevent="group" :class="(column.groupable || (props.reorderColumns && !column.freeze)) ? 'header-cell-container groupable' : 'header-cell-container'" 
+        :draggable="(column.groupable || (props.reorderColumns && !column.freeze))" @dragstart="dragStart">
+        <svg-icon @keyup.enter.stop.prevent="click" tabindex="0" v-if="canSort" icon="arrow-up" :class="getSortClasses()" />
         <span>{{ props.column.label }}</span>
     </div>
 </template>
@@ -44,17 +67,26 @@ svg {
 }
 
 svg:focus {
-    outline: 1px dashed blue;
+    outline: 2px solid var(--table-focus-color);
     outline-offset: -1px;
+    border-radius: 3px;
 }
 
 .header-cell-container {
     display: flex;
     align-items: center;
+    height: var(--table-header-height);
+    box-sizing: border-box;
     padding: 0 16px 0 24px;
     font-weight: 500;
     white-space: nowrap;
+    text-overflow: ellipsis;
     background-color: var(--table-fixed-color);
+}
+
+.header-cell-container:focus {
+    outline: 1px dashed var(--table-focus-color);
+    outline-offset: -1px;
 }
 
 .icon {
@@ -73,8 +105,8 @@ svg:focus {
     opacity: 1;
 }
 
-.sortable {
-    cursor: pointer;
+.groupable {
+    cursor: grab;
 }
 
 .header-cell-container:hover .icon, .icon:focus {

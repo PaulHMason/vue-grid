@@ -13,15 +13,15 @@
 <style scoped>
     .container {
         display: flex;
+        min-width: var(--table-spacer-size);
         width: var(--table-spacer-size);
-        height: var(--table-group-height);
+        height: var(--table-row-height);
         align-items: center;
         justify-content: center;
-        cursor: pointer;
     }
 
     .container:focus {
-        outline: 1px dashed blue;
-        outline-offset: -1px;
+        outline: 2px solid var(--table-focus-color);
+        outline-offset: -6px;
     }
 </style>

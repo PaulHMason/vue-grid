@@ -5,7 +5,7 @@
 </script>
 
 <template>
-    <div>{{row?.dessert}}</div>
+    <div>DETAIL</div>
 </template>
 
 <style scoped>

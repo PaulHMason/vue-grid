@@ -18,7 +18,7 @@
 
     button {
         text-transform: uppercase;
-        font-weight: 500;
+        font-weight: 600;
         border: none;
         padding: 4px 16px;
         border-radius: 4px;
@@ -32,7 +32,7 @@
     }
 
     button:focus {
-        outline: 1px dashed blue;
-        outline-offset: -1px;
+        outline: 2px solid var(--table-focus-color);
+        outline-offset: -2px;
     }
 </style>

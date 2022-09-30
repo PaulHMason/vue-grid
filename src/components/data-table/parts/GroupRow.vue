@@ -6,6 +6,7 @@
     import TextVisualizer from '../visualizers/TextVisualizer.vue';
     import NumberVisualizer from '../visualizers/NumberVisualizer.vue';
     import BooleanVisualizer from '../visualizers/BooleanVisualizer.vue';
+    import ArrayVisualizer from '../visualizers/ArrayVisualizer.vue';
     import DateVisualizer from '../visualizers/DateVisualizer.vue';
 
     const props = defineProps(['columns', 'row', 'detail', 'spacers', 'selectionMode', 'openGroups', 'showSummary', 'updateKey']);
@@ -17,10 +18,10 @@
         }
 
         return false;
-    })
+    });
 
     function getOffset() {
-        return `padding-left: ${(props.row.level - 1) * 18}px`;
+        return `padding-left: ${(props.row.level - 1) * 16}px`;
     }
 
     function toggleDetail() {  
@@ -45,8 +46,8 @@
 </script>
 
 <template>
-    <tr ref="el" tabindex="0" class="group" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)" @keyup.enter.stop.prevent="toggleDetail">
-        <td :colspan="props.columns.length - 4" class="group">
+    <tr ref="el" group-row tabindex="0" class="group" @keyup.down.stop="onKey($event, true)" @keyup.up.stop="onKey($event, false)" @keyup.enter.stop.prevent="toggleDetail">
+        <td class="group">
             <div class="group-row" :style="getOffset()">
                 <GroupRowToggle :showing="row.showDetail" @click="toggleDetail" @keyup.enter.stop.prevent="toggleDetail" />
                 <span class="group-label">{{row.column.label}}: </span>
@@ -54,7 +55,9 @@
                 <number-visualizer v-else-if="row.column.type === 'number'" :value="row.value" :column="row.column" />
                 <boolean-visualizer v-else-if="row.column.type === 'boolean'" :value="row.value" :column="row.column" />
                 <date-visualizer v-else-if="row.column.type === 'date'" :value="row.value" :column="row.column" />
+                <array-visualizer v-else-if="row.column.type === 'list'" :column="row.column" :value="row.value" />
                 <text-visualizer v-else :value="row.value" :column="row.column" />
+                <span>({{row.__items.length}})</span>
             </div>
         </td>
         <td colspan="1000"></td>
@@ -63,7 +66,7 @@
         <template v-for="r in row.__items" :key="r.id">
             <group-row v-if="isGroups" :columns="props.columns" :row="r" :detail="detail" :spacers="spacers" :selection-mode="selectionMode" :open-groups="props.openGroups" 
                 :show-summary="showSummary" :update-key="props.updateKey" />
-            <body-row v-else :columns="props.columns" :row="r" :detail="detail" :spacers="spacers" :selection-mode="selectionMode" :update-key="props.updateKey" />
+            <body-row v-else-if="r.__display" :columns="props.columns" :row="r" :detail="detail" :spacers="spacers" :selection-mode="selectionMode" :update-key="props.updateKey" />
         </template>
         <summary-row v-if="showSummary && !isGroups" :columns="props.columns" :rows="row.__items" :spacers="spacers" :detail="detail" :selection-mode="selectionMode" 
             :update-key="props.updateKey" />
@@ -78,14 +81,14 @@
     }
 
     tr.group {
-        height: var(--table-group-height);
+        height: var(--table-row-height);
         box-sizing: border-box;
         font-weight: 500;
         background-color: var(--table-fixed-color);
     }
 
     tr:focus {
-        outline: 1px dashed blue;
+        outline: 1px dashed var(--table-focus-color);
         outline-offset: -2px;
     }
 
@@ -95,10 +98,12 @@
 
     td.group {
         position: sticky;
+        top: 0;
         left: 0;
-        z-index: 1;
+        z-index: 997;
         white-space: nowrap;
         padding: 0;
+        max-width: 1px;
     }
 
     .group-label {

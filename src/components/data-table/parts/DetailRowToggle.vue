@@ -16,13 +16,12 @@
         align-items: center;
         justify-content: center;
         width: var(--table-spacer-size);
-        height: calc(var(--table-body-height) - 1px);
+        height: calc(var(--table-row-height) - 1px);
         box-sizing: border-box;
-        cursor: pointer;
     }
 
     .container:focus {
-        outline: 1px dashed blue;
-        outline-offset: -1px;
+        outline: 2px solid var(--table-focus-color);
+        outline-offset: -6px;
     }
 </style>

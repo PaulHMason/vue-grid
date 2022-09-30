@@ -1,12 +1,12 @@
 <script setup lang="ts">
   import DataTable from './components/data-table/DataTable.vue';
   import RowDetail from './demo/RowDetail.vue';
-  import { columns, rows, groupOrder } from './demo/TableData.js';
+  import { columns, rows, groupOrder } from './demo/WithdrawalData.js';
 </script>
 
 <template>
-  <data-table tabindex="0" class="table"  :columns="columns" :rows="rows" :row-detail="RowDetail" :group-order="groupOrder" open-group="available" selection-mode="multiple" 
-              group-summary filter-allx hide-filterx></data-table>
+  <data-table class="table"  :columns="columns" :rows="rows" :group-order="groupOrder" selection-mode="multiple" :row-detail="RowDetail" 
+              group-summary filter-allx hide-filterx column-separatorsx reorder-columnsx column-sizing="auto"></data-table>
 </template>
 
 <style scoped>

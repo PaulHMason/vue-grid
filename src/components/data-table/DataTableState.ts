@@ -1,8 +1,12 @@
-import type { Column, Group, GroupState, ColumnFilter } from './DataTableTypes.js';
+import { type Column, type Group, type GroupState, type ColumnFilter, unsortableTypes } from './DataTableTypes.js';
 
 type SelectionMode = 'none' | 'single' | 'multiple';
 
 export class DataTableState {
+    private initialized: boolean = false;
+    private displayFrame: any = null;
+    private newDisplayItemData: any = null;
+    public displayItemData = { groups: 0, rows: 0, summaries: 0, total: 0, visibleCount: 0, visibleTotal: 0, startIndex: 0, endIndex: 0, trailing: 0, leading: 0, visible: 0, workingIndex: 0 }
     private groupMap: Map<string, GroupState> = new Map<string, GroupState>();
     private allRows?: Array<object> = [];
     private stateUpdated?: Function | null = null;
@@ -10,6 +14,7 @@ export class DataTableState {
     public columns?: Array<Column> = [];
     public groupOrder?: Array<string> = [];
     public groups: Array<any> = [];
+    public visibleGroups: Array<any> = [];
     public openGroups: Array<any> = [];
     public groupBy: Array<Group> = [];
     public maxLevel: number = 0;
@@ -25,12 +30,7 @@ export class DataTableState {
     public hideFilter?: boolean = true;
     public filters?: Map<string, ColumnFilter> = new Map<string, ColumnFilter>();
 
-    constructor(columns?: Array<Column>, rows?: Array<object>, groupOrder?: Array<string>, openGroup?: string, selectionMode?: SelectionMode, stateUpdated?: Function, 
-                filterAll?: boolean, hideFilter?: boolean) {
-        this.init(columns, rows, groupOrder, openGroup, selectionMode, stateUpdated, filterAll, hideFilter);
-    }
-
-    private init(columns?: Array<Column>, rows?: Array<object>, groupOrder?: Array<string>, openGroup?: string, selectionMode?: SelectionMode, stateUpdated?: Function, 
+    public initialize(columns?: Array<Column>, rows?: Array<object>, groupOrder?: Array<string>, openGroup?: string, selectionMode?: SelectionMode, stateUpdated?: Function, 
                 filterAll?: boolean, hideFilter?: boolean) {
         this.columns = columns;
         this.allRows = Array.from(rows as any);
@@ -50,6 +50,9 @@ export class DataTableState {
         this.updatesSupportGrouping();
         this.updateGroups();
         this.updateSelectionState();
+
+        this.initialized = true;
+        this.internalStateUpdated();
     }
 
     /* PUBLIC */
@@ -69,7 +72,7 @@ export class DataTableState {
         } else {
             const column = this.getColumn(columnId);
 
-            if (column && column.sortable) {
+            if (column && column.sortable && (!unsortableTypes.includes(column.type) || column.sortFunction)) {
                 this.sortDesc = !this.sortDesc;
                 this.sortBy = columnId;
                 this.sortData(this.groups, column);
@@ -99,15 +102,35 @@ export class DataTableState {
 
         if (row) {
             row._showDetail = !row._showDetail;
+            this.updateDisplayItemData();
             this.internalStateUpdated();
         }
     }
 
     public toggleGroupDetail(group: any) {
         if (group) {
+            if (group.__originalGroup) group = group.__originalGroup;
+            console.log('TOGGLE GROUP 2');
+            console.log(group);
             group.showDetail = !group.showDetail;
             this.groupMap.set(group.path, { group: group, showDetail: group.showDetail });
+            this.updateDisplayItemData();
             this.internalStateUpdated();
+        }
+    }
+
+    public shiftGroup(columnId: string, direction: 'left' | 'right') {
+        const currentIndex: any = this.groupOrder?.indexOf(columnId);
+        const groupCount: any  = this.groupOrder?.length;
+        if (currentIndex === -1) return;
+
+        const newIndex: any = (direction === 'left') ? currentIndex - 1 : currentIndex + 1
+
+        if ((newIndex >= 0) && (newIndex < groupCount)) {
+            this.groupOrder?.splice(currentIndex, 1);
+            this.groupOrder?.splice(newIndex, 0, columnId);
+            this.updateGroupBy();
+            this.updateGroups();
         }
     }
 
@@ -124,6 +147,8 @@ export class DataTableState {
                 }
             } 
 
+            index = (index === -1) ? (this.groupOrder as any).length : index;
+
             // Update the group order.
             const currentIndex = this.groupOrder?.indexOf(columnId) || 0;
 
@@ -133,7 +158,6 @@ export class DataTableState {
                 this.groupOrder?.splice(index, 0, columnId);
             }
 
-            //this.groupMap = new Map<string, GroupState>();
             this.updateGroupBy();
             this.updateGroups();
         }
@@ -144,11 +168,30 @@ export class DataTableState {
 
         if (column && column.groupable && column.grouped) {
             column.grouped = false;
-
-            //this.groupMap = new Map<string, GroupState>();
-
             this.updateGroupBy();
             this.updateGroups();
+        }
+    }
+    
+    public moveColumn(srcColumnId: string, destColumnId: string) {
+        if ((srcColumnId !== destColumnId) && (this.columns)) {
+            const srcColumn: any = this.getColumn(srcColumnId);
+            const destColumn: any = this.getColumn(destColumnId);
+
+            if (srcColumn.freeze || (destColumn && destColumn.freeze)) return;
+
+            const srcIndex: number = this.columns.indexOf(srcColumn);
+            const destIndex: number = this.columns.indexOf(destColumn);
+
+            this.columns.splice(srcIndex, 1);
+
+            if (destIndex !== -1) {
+                this.columns.splice(destIndex, 0, srcColumn);
+            } else {
+                this.columns.push(srcColumn);
+            }
+
+            this.internalStateUpdated();
         }
     }
 
@@ -158,6 +201,16 @@ export class DataTableState {
 
     public getColumn(id: string) {
         return this.columns?.find((columns: any) => columns.id === id);
+    }
+
+    public getColumnIndex(id: string): number {
+        const column = this.getColumn(id);
+
+        if (column && this.columns) {
+            return this.columns.indexOf(column);
+        }
+        
+        return -1;
     }
 
     /* FILTER */
@@ -260,7 +313,7 @@ export class DataTableState {
 
     /* STATE */
     private internalStateUpdated(reason?: string) {
-        if (this.stateUpdated) {
+        if (this.initialized && this.stateUpdated) {
             this.stateUpdated(reason);
         }
     }
@@ -309,7 +362,8 @@ export class DataTableState {
         }
 
         this.groups = groupedData[0].__items;
-        this.resort();
+        this.resort();  
+        this.updateDisplayItemData();
         this.internalStateUpdated();
     }
 
@@ -417,8 +471,8 @@ export class DataTableState {
 
     private sortData(data: Array<any>, by: Column, rowSortFunc?: Function, groupSortFunc?: Function) {
         if (data && data.length > 0) {
-            if (!rowSortFunc) rowSortFunc = this.createSortFunction(by.field);
-            if (!groupSortFunc) groupSortFunc = this.createSortFunction('value');
+            if (!rowSortFunc) rowSortFunc = by.sortFunction || this.createSortFunction(by.field);
+            if (!groupSortFunc) groupSortFunc = by.sortFunction || this.createSortFunction('value');
 
             if ((data[0] as any).__items) {             
                 if ((data[0] as any).column.id === by.id) {
@@ -446,6 +500,149 @@ export class DataTableState {
                 if (a[field] < b[field]) return -1;
                 if (a[field] > b[field]) return 1;
                 return 0;
+            }
+        }
+    }
+
+    /* DISPLAY */
+    public setDisplayFrame(frame: any) {
+        this.displayFrame = frame;
+        this.updateDisplayItemData();
+    }
+
+    private updateDisplayItemData() {
+        if (!this.displayFrame) return;
+
+        const frameSize = 2;
+        this.newDisplayItemData = { groups: 0, rows: 0, summaries: 0, total: 0, visibleCount: 0, visibleTotal: 0, startIndex: 0, endIndex: 0, trailing: 0, leading: 0, visible: 0, workingIndex: 0 };
+        const newData = this.newDisplayItemData;
+        const itemHeight = this.displayFrame.itemHeight;
+        const visibleSize = this.displayFrame.clientHeight;
+
+        newData.visible = visibleSize * frameSize;
+        newData.leading = Math.max(this.displayFrame.scrollTop - (visibleSize * (frameSize - 1) / 2), 0);
+        newData.visibleTotal = Math.ceil(newData.visible / itemHeight);
+        newData.startIndex = Math.max(Math.floor(newData.leading / itemHeight), 0);
+
+        this.rows?.forEach((row: any) => row.__display = false);
+
+        if (this.groups && this.groups.length > 0) {
+            if (!this.groups[0].isGroup) {
+                newData.rows = this.groups.length;
+
+                if (this.hasSummary) {
+                    newData.summaries = 1;
+                }
+
+                this.groups.forEach((item, index) => {
+                    item.__display = (index >= newData.startIndex) && (newData.visibleCount < newData.visibleTotal);
+                    newData.workingIndex += 1;
+                    if (item.__display) newData.visibleCount += 1;
+                });
+            } else {
+                
+                this.groups.forEach((item: any) => this.processDisplayGroup(item));
+            }
+        }
+
+        newData.total = newData.rows + newData.groups + newData.summaries;
+        const totalSize = newData.total * itemHeight;
+        newData.visibleTotal = newData.visibleCount;
+        newData.trailing = Math.max(totalSize - newData.leading - newData.visible, 0);
+        newData.endIndex = Math.min(newData.startIndex + newData.visibleTotal - 1, newData.total);
+        this.displayItemData = newData;
+        //this.visibleGroups = this.groups.filter(g => g.__display);
+
+        console.clear();
+        //console.log(`*** START: ${this.newDisplayItemData.startIndex}: ${this.newDisplayItemData.groups}, ${this.newDisplayItemData.rows}, ${this.newDisplayItemData.summaries}, ${this.newDisplayItemData.total} ***`);
+        const dest: any = [];
+        this.flatten(this.groups, dest);
+        //console.log(dest);
+        this.visibleGroups = dest;
+        
+        this.tempDisplay(this.groups);
+        //console.log(`*** END: ${this.newDisplayItemData.groups}, ${this.newDisplayItemData.rows}, ${this.newDisplayItemData.summaries}, ${this.newDisplayItemData.total} ***`);
+    }
+
+    private flatten(src: any, dest: any) {
+        src.forEach((item: any) => {
+            if (item.isGroup) {
+                if (item.__display) {
+                    //console.log(item);
+                    dest.push(this.cloneGroup(item));
+
+                    if (item.__items && item.__items.length > 0) {
+                        this.flatten(item.__items, dest);
+                    }
+                }
+            } else {
+                if (item.__display) {
+                    //console.log(item);
+                    dest.push(item);
+                }
+            }
+        });
+    }
+
+    private cloneGroup(group: any) {
+        return {
+            column: group.column,
+            isGroup: group.isGroup,
+            level: group.level,
+            path: group.path,
+            showDetail: group.showDetail,
+            value: group.value,
+            visualizer: group.visualizer,
+            __items: group.__items,
+            __display: group.__display,
+            __originalGroup: group
+        }
+    }
+
+    private tempDisplay(items: any) {
+        items.forEach((item: any) => {
+            if (item.isGroup) {
+                if (item.__display) {
+                    console.log(`${item.column.label}: ${item.value}`);
+
+                    if (item.__items && item.__items.length > 0) {
+                        this.tempDisplay(item.__items);
+                    }
+                }
+            } else {
+                if (item.__display) {
+                    console.log(item);
+                }
+            }
+        });
+    }
+
+    private processDisplayGroup(group: any) {
+        this.newDisplayItemData.groups += 1;
+        this.newDisplayItemData.workingIndex += 1;
+
+        if ((this.newDisplayItemData.workingIndex >= this.newDisplayItemData.startIndex) && (this.newDisplayItemData.visibleCount <= this.newDisplayItemData.visibleTotal)) {
+            group.__display = true;
+            this.newDisplayItemData.visibleCount += 1;
+        } else {
+            group.__display = false;
+        }
+
+        if (group.showDetail && group.__items && group.__items.length > 0) {
+            if (!group.__items[0].isGroup) {
+                this.newDisplayItemData.rows += group.__items.length;
+
+                group.__items.forEach((item: any) => {
+                    item.__display = ((this.newDisplayItemData.workingIndex >= this.newDisplayItemData.startIndex) && (this.newDisplayItemData.visibleCount <= this.newDisplayItemData.visibleTotal))
+                    this.newDisplayItemData.workingIndex += 1;
+                    if (item.__display) this.newDisplayItemData.visibleCount += 1;
+                });
+
+                if (this.hasSummary) {
+                    this.newDisplayItemData.summaries += 1;
+                }
+            } else {
+                group.__items.forEach((item: any) => this.processDisplayGroup(item));
             }
         }
     }

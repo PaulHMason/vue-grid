@@ -2,7 +2,6 @@
 import { defineProps, ref, onMounted, onUpdated } from "vue";
 import BodyCell from "./BodyCell.vue";
 import DetailRowToggle from "./DetailRowToggle.vue";
-import RowSpacer from "./RowSpacer.vue";
 import RowSelector from "./RowSelector.vue";
 
 const props = defineProps([
@@ -86,14 +85,14 @@ onUpdated(() => {
 </script>
 
 <template>
-  <tr ref="rowEl" tabindex="0" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
-    <th v-if="props.selectionMode !== 'none'" class="fixed separator">
-      <RowSelector :selected="props.row.selected" @select="toggleSelection" />
+  <tr data-row body-row ref="rowEl" tabindex="0" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
+    <th v-if="props.selectionMode !== 'none'" class="fixed">
+      <RowSelector class="separator" :selected="props.row.selected" @select="toggleSelection" />
     </th>
     <th v-if="props.detail" class="fixed separator">
       <DetailRowToggle :showing="props.row._showDetail" @click="toggleDetail" @keyup.enter.stop.prevent="toggleDetail" />
     </th>
-    <td v-for="column in props.columns" :key="column.id" :class="column.freeze ? 'fixed' : ''">
+    <td v-for="column in props.columns.filter((c: any) => !c.hide)" :key="column.id" :class="column.freeze ? 'fixed' : ''">
       <body-cell :column="column" :row="row"></body-cell>
     </td>
     <td></td>
@@ -107,8 +106,9 @@ onUpdated(() => {
 
 <style scoped>
 tr {
-  height: var(--table-body-height);
+  height: var(--table-row-height);
   font-weight: 400;
+  contain: strict;
 }
 
 tr:hover, tr:focus-within {
@@ -116,7 +116,7 @@ tr:hover, tr:focus-within {
 }
 
 tr:focus-within {
-  outline: 1px dashed blue;
+  outline: 1px dashed var(--table-focus-color);
   outline-offset: -1px;
 }
 
@@ -128,10 +128,12 @@ td, th {
     padding: 0;
     box-sizing: border-box;
     border-bottom: 1px solid var(--table-separator-color);
+    contain: content;
 }
 
 .separator {
   border-right: 1px solid var(--table-separator-color);
+  height: var(--table-row-height);
 }
 
 tr.detail {

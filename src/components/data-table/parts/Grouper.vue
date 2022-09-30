@@ -1,21 +1,8 @@
 <script setup lang="ts">
-    import { defineProps, defineEmits } from 'vue';
-    import SvgIcon from '../../svg-icon/SvgIcon.vue';
+    import { defineProps } from 'vue';
+    import type GrouperItemVue from './GrouperItem.vue';
+    import GrouperItem from './GrouperItem.vue';
     const props = defineProps(['groups', 'sortBy', 'sortDesc']);
-    const emit = defineEmits(['sort']);
-
-    function remove(id: string) {
-        const event = new CustomEvent('removegroup', { 
-            detail: {
-                id: id
-            }
-        });
-        dispatchEvent(event);
-    }
-
-    function sort(id: string) {
-        emit('sort', id);
-    }
 
     function dragOver(e: any) {
         e.preventDefault();
@@ -35,11 +22,6 @@
         dispatchEvent(event);
     }
 
-    function dragStart(e: any) {
-        e.dataTransfer.dropEffect = 'move';
-        e.dataTransfer.setData('text/plain', e.target.getAttribute('column-id'));
-    }
-
     function dragEnter(e: any) {
         e.preventDefault();
         e.target.classList.add('over');
@@ -48,20 +30,6 @@
     function dragLeave(e: any) {
         e.preventDefault();
         e.target.classList.remove('over');
-    }
-
-    function getSortClasses(column: any) {
-        const classes = ['icon'];
-
-        if (props.sortDesc) {
-            classes.push('icon-desc');
-        }
-
-        if (column.id === props.sortBy) {
-            classes.push('icon-fixed');
-        }
-
-        return classes.join(' ');
     }
 </script>
 
@@ -74,11 +42,7 @@
         </div>
 
         <template v-for="(group, index) in props.groups" :key="group.columnId">
-            <div :column-id="group.columnId" :class="group.column.sortable ? 'group-item' : 'group-item no-sort'" @click="group.column.sortable ? sort(group.columnId) : null" draggable="true" @dragstart="dragStart">
-                <svg-icon v-if="group.column.sortable" icon="arrow-up" :class="getSortClasses(group.column)"/>
-                <span :class="group.column.sortable ? '' : 'no-sort'">{{group.label}}</span>
-                <svg-icon icon="cross" class="icon icon-fixed" @click.stop="remove(group.columnId)" />
-            </div>
+            <grouper-item :group="group" :sort-by="props.sortBy" :sort-desc="props.sortDesc"/>
             <div class="drop-target" :index="index+1" @dragover="dragOver" @drop="drop" @dragenter="dragEnter" @dragleave="dragLeave">
                 <div class="indicator">
                     <div class="info">Drag columns here to group them.</div>
@@ -89,10 +53,6 @@
 </template>
 
 <style scoped>
-    svg {
-        fill: rgba(0, 0, 0, 0.38);
-    }
-
     .grouper-container {
         display: flex;
         align-items: center;
@@ -105,23 +65,6 @@
         background-color: var(--table-group-bar-color);
         border-bottom: 1px solid var(--table-separator-color);
         user-select: none;
-    }
-
-    .group-item {
-        height: 32px;
-        box-sizing: border-box;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        border: 1px solid rgba(0, 0, 0, 0.87);
-        padding: 8px 8px;
-        border-radius: 3px;
-        cursor: pointer;
-    }
-
-    .group-item.no-sort {
-        cursor: default;
     }
 
     .indicator {
@@ -157,29 +100,5 @@
 
     .drop-target:last-of-type .info {
         display: flex;
-    }
-
-    .icon {
-        width: 14px;
-        height: 14px;
-        opacity: 0;
-        cursor: pointer;
-    }
-
-    .icon-desc {
-        transform: rotate(180deg);
-    }
-
-    .icon-fixed {
-        fill: rgba(0, 0, 0, 0.87);
-        opacity: 1;
-    }
-
-    .group-item:hover .icon {
-        opacity: 1;
-    }
-
-    span.no-sort {
-        margin-left: 8px;
     }
 </style>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
-    import RowSpacer from './RowSpacer.vue';
     import { defineProps, onMounted, onUpdated, ref } from 'vue';
-    import SummaryCell from './SummaryCell.vue';
+    import BodyCell from './BodyCell.vue';
     const props = defineProps(['columns', 'rows', 'spacers', 'detail', 'selectionMode', 'updateKey']);
     const el = ref(null);
 
@@ -75,12 +74,12 @@
 </script>
 
 <template>
-    <tr tabindex="0" ref="el" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
+    <tr data-row tabindex="0" ref="el" @keyup.down.stop="onKey($event, true)"  @keyup.up.stop="onKey($event, false)">
         <th v-if="props.detail" class="fixed"></th>
         <th v-if="props.selectionMode" class="fixed"></th>
-        <template v-for="column in props.columns" :key="column.id">
+        <template v-for="column in props.columns.filter((c: any) => !c.hide)" :key="column.id">
             <td v-if="column.summary" :class="column.freeze ? 'fixed' : ''">
-                <summary-cell :column="column" :value="getSummary(column)"/>
+                <body-cell :column="column" :value="getSummary(column)"/>
             </td>
             <td v-else :class="column.freeze ? 'fixed' : ''"></td>
         </template>
@@ -90,13 +89,13 @@
 
 <style scoped>
 tr {
-    height: var(--table-group-height);
+    height: var(--table-row-height);
     font-weight: 500;
     background-color: var(--table-summary-bar-color);
 }
 
 tr:focus {
-    outline: 1px dashed blue;
+    outline: 1px dashed var(--table-focus-color);
     outline-offset: -1px;
 }
 
@@ -109,7 +108,6 @@ td, th {
     position: sticky;
     left: 0;
 }
-
 .last-fixed {
     border-right: 1px solid var(--table-separator-color);
 }

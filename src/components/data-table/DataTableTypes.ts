@@ -4,7 +4,8 @@ export type Group = {
     label: string,
     visualizer?: object,
     showDetail: boolean,
-    path?: string
+    path?: string,
+    visible: boolean
 }
 
 export type GroupState = {
@@ -16,10 +17,12 @@ export type Column = {
     id: string,
     label?: string,
     field?: string,
-    type: 'text' | 'number' | 'boolean' | 'date' | 'action',
+    type: 'text' | 'number' | 'boolean' | 'date' | 'list' | 'action',
+    hide?: boolean,
     formatFunction?: Function,
     freeze?: boolean,
     sortable?: boolean,
+    sortFunction?: Function,
     visualizer?: object,
     actionLabel?: string,
     actionFunction?: Function,
@@ -28,7 +31,8 @@ export type Column = {
     groupVisualizer?: object,
     summary?: 'sum' | 'custom',
     summaryFunction?: Function,
-    filterable?: boolean
+    filterable?: boolean,
+    width?: string
 }
 
 export type ColumnFilter = {
@@ -37,3 +41,7 @@ export type ColumnFilter = {
     value?: any,
     operator?: string
 }
+
+export type ColumnSizing = 'auto' | 'fixed' | 'resizable';
+
+export const unsortableTypes = ['action', 'list', 'custom'];
